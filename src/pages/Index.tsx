@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Eye, Star, Shield, Sparkles, BarChart3, Globe, Clock3, Zap } from 'lucide-react';
 import logo from '@/assets/logo.jpg';
-import heroVisual from '@/assets/hero-visual.jpg';
+import hero3d from '@/assets/hero-3d.jpg';
 
 const Index = () => {
   return (
