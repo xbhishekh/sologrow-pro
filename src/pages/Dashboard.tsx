@@ -147,31 +147,6 @@ export default function Dashboard() {
 
 
 
-        {/* Subscription Banner */}
-        {hasActiveSubscription && subscription && (
-          <div className="relative overflow-hidden rounded-[2.5rem] border border-primary/20 bg-primary/5 p-8">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-[100px] -mr-32 -mt-32" />
-            <div className="relative flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-              <div className="flex items-center gap-5">
-                <div className="w-16 h-16 rounded-3xl bg-primary flex items-center justify-center shadow-2xl shadow-primary/30 shrink-0">
-                  <Crown className="h-9 w-9 text-black fill-current" />
-                </div>
-                <div>
-                  <p className="font-black text-2xl tracking-tighter text-white">
-                    {subscription.plan_type === 'lifetime' ? 'Lifetime Member' : 'Pro Member'}
-                  </p>
-                  <p className="text-xs font-bold uppercase tracking-widest text-white/30">
-                    {subscription.plan_type === 'lifetime'
-                      ? 'UNLIMITED ACCESS FOREVER'
-                      : subscription.expires_at
-                        ? `Expires ${formatDistanceToNow(new Date(subscription.expires_at), { addSuffix: true })}`
-                        : 'Elite Access Active'}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
 
         {/* Stats Grid */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
