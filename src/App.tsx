@@ -133,7 +133,7 @@ const App = () => {
                     <Route path="/refund" element={<RefundPolicy />} />
                     <Route path="/cookies" element={<CookiePolicy />} />
                   </Routes>
-                </GlobalSubscriptionGuard>
+                
               </BrowserRouter>
             </AppErrorBoundary>
           </TooltipProvider>
