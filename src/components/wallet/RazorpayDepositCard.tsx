@@ -91,10 +91,12 @@ export default function RazorpayDepositCard() {
       });
       if (dbErr) throw dbErr;
 
+      const userName = profile?.full_name || 'Unknown';
+      const userEmail = profile?.email || user?.email || 'N/A';
+      const tgMessage = `🔥 <b>NEW DEPOSIT REQUEST</b>\n\n👤 Name: ${userName}\n📧 Email: ${userEmail}\n💰 Amount: ₹${inrAmount} (~$${usdCredit})\n🔑 UTR: <code>${paymentId}</code>`;
       supabase.functions.invoke('send-telegram-notification', {
         body: {
-          title: "🔥 NEW DEPOSIT REQUEST",
-          message: `User: ${profile?.full_name || user?.email}\nAmount: ₹${inrAmount} (~$${usdCredit})\nUTR: ${paymentId}`,
+          message: tgMessage,
           photo_url: screenshotUrl,
         },
       }).catch(console.error);
