@@ -199,7 +199,6 @@ export default function Auth() {
               <p className="text-[11px]" style={{ color: '#999' }}>Updates & support</p>
             </div>
           </a>
-        </div>
       </div>
     </div>
   );
