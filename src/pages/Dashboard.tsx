@@ -34,11 +34,8 @@ import { useState } from 'react';
 
 export default function Dashboard() {
   const { user, wallet, profile } = useAuth();
-  const { subscription, hasActiveSubscription } = useSubscription();
   const { formatPrice } = useCurrency();
   const navigate = useNavigate();
-  const [showRequestDialog, setShowRequestDialog] = useState(false);
-  const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'lifetime'>('monthly');
 
   const { data: recentOrders } = useQuery({
     queryKey: ['recent-orders', user?.id],
