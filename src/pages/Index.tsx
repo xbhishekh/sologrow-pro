@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Eye, Star, Shield, Sparkles, BarChart3, Globe, Clock3, Zap } from 'lucide-react';
 import logo from '@/assets/logo.jpg';
-import heroVisual from '@/assets/hero-visual.jpg';
+import hero3d from '@/assets/hero-3d.jpg';
 
 const Index = () => {
   return (
@@ -12,7 +12,7 @@ const Index = () => {
       <section className="relative min-h-[100vh] flex flex-col">
         {/* Background image */}
         <div className="absolute inset-0">
-          <img src={heroVisual} alt="" className="w-full h-full object-cover" />
+          <img src={hero3d} alt="" className="w-full h-full object-cover" />
           <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, rgba(88,28,135,.88) 0%, rgba(157,23,77,.75) 40%, rgba(234,88,12,.6) 100%)' }} />
           <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, transparent 60%, rgba(0,0,0,.4) 100%)' }} />
         </div>
@@ -173,7 +173,7 @@ const Index = () => {
         <section className="py-20">
           <div className="max-w-[1100px] mx-auto px-6">
             <div className="relative rounded-3xl overflow-hidden text-center" style={{ minHeight: '400px' }}>
-              <img src={heroVisual} alt="" className="absolute inset-0 w-full h-full object-cover" />
+              <img src={hero3d} alt="" className="absolute inset-0 w-full h-full object-cover" />
               <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, rgba(88,28,135,.92) 0%, rgba(157,23,77,.85) 50%, rgba(234,88,12,.75) 100%)' }} />
               <div className="relative z-10 py-16 px-6">
                 <img src={logo} alt="" className="w-14 h-14 rounded-xl object-cover mx-auto mb-6 shadow-xl" />
