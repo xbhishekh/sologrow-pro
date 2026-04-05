@@ -38,7 +38,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         supabase.from('user_roles').select('role').eq('user_id', userId).single(),
       ]);
 
-      if (profileResult.data) setProfile(profileResult.data as Profile);
+      if (profileResult.data) setProfile(profileResult.data as unknown as Profile);
       if (walletResult.data) setWallet(walletResult.data as Wallet);
       if (roleResult.data) setRole(roleResult.data.role as AppRole);
     } catch (error) {
