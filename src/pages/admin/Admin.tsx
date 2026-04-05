@@ -64,10 +64,13 @@ export default function Admin() {
   // Save markup mutation
   const saveMarkupMutation = useMutation({
     mutationFn: async (percent: number) => {
+      // Update all rows (only 1 row exists)
+      const { data: existing } = await supabase.from('platform_settings').select('id').limit(1).maybeSingle();
+      if (!existing) throw new Error('No platform settings found');
       const { error } = await supabase
         .from('platform_settings')
         .update({ global_markup_percent: percent, updated_at: new Date().toISOString() })
-        .eq('id', 'global');
+        .eq('id', existing.id);
       if (error) throw error;
     },
     onSuccess: () => {

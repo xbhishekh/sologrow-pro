@@ -11,8 +11,8 @@ export function useMaintenanceMode() {
       const { data, error } = await supabase
         .from('platform_settings')
         .select('maintenance_mode')
-        .eq('id', 'global')
-        .single();
+        .limit(1)
+        .maybeSingle();
       if (error) return false;
       return data?.maintenance_mode ?? false;
     },
