@@ -8,7 +8,7 @@ import { Mail, Lock, User, Loader2, ArrowLeft, Shield, Zap, Eye, EyeOff, ArrowRi
 import { supabase } from '@/integrations/supabase/client';
 import { z } from 'zod';
 import logo from '@/assets/logo.jpg';
-import hero3d from '@/assets/hero-3d.jpg';
+
 
 const loginSchema = z.object({
   email: z.string().trim().email('Invalid email address'),
@@ -94,29 +94,15 @@ export default function Auth() {
   const inputClass = "h-12 rounded-xl border-[#e5e5e5] bg-white focus:border-[#1a1a2e] focus:ring-1 focus:ring-[#1a1a2e] text-[#1a1a2e] font-medium px-4 placeholder:text-[#bbb] transition-all";
 
   return (
-    <div className="min-h-screen flex">
-      {/* Left — visual panel */}
-      <div className="hidden lg:flex lg:w-1/2 relative items-center justify-center">
-        <img src={hero3d} alt="" className="absolute inset-0 w-full h-full object-cover" />
-        <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, rgba(88,28,135,.82), rgba(147,51,234,.7), rgba(236,72,153,.6))' }} />
-        <div className="relative z-10 max-w-md px-10 text-white">
-          <img src={logo} alt="OrganicSMM" className="w-14 h-14 rounded-xl object-cover mb-8 shadow-xl" />
-          <h2 className="text-4xl font-extrabold tracking-tight mb-4" style={{ fontFamily: "'Outfit', system-ui, sans-serif" }}>
-            Grow your social media the right way.
-          </h2>
-          <p className="text-white/60 text-[15px] leading-relaxed">
-            Real organic engagement with natural delivery patterns. Join 2,400+ creators and businesses.
-          </p>
-        </div>
-      </div>
-
-      {/* Right — form */}
-      <div className="flex-1 flex items-center justify-center px-6 py-12" style={{ background: '#fafaf8' }}>
-        <div className="w-full max-w-[400px]">
-          {/* Mobile logo */}
-          <div className="lg:hidden flex items-center gap-2.5 mb-10">
-            <img src={logo} alt="OrganicSMM" className="w-9 h-9 rounded-lg object-cover" />
-            <span className="text-[15px] font-bold tracking-tight" style={{ color: '#1a1a2e' }}>OrganicSMM</span>
+    <div className="min-h-screen flex items-center justify-center px-6 py-12" style={{ background: 'linear-gradient(180deg, #fff 0%, #fdf2f8 50%, #fce7f3 100%)' }}>
+      <div className="w-full max-w-[400px]">
+          {/* Logo */}
+          <div className="flex items-center justify-center gap-2.5 mb-10">
+            <img src={logo} alt="OrganicSMM" className="w-10 h-10 rounded-xl object-cover shadow-sm" />
+            <div className="flex flex-col">
+              <span className="text-[16px] font-bold tracking-tight" style={{ color: '#1a1a2e' }}>OrganicSMM</span>
+              <span className="text-[9px] font-semibold uppercase tracking-[0.15em]" style={{ background: 'linear-gradient(90deg, #ec4899, #f97316)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>✦ Updated Version</span>
+            </div>
           </div>
 
           <Link to="/" className="inline-flex items-center gap-1.5 text-[12px] font-medium mb-8" style={{ color: '#999' }}>
@@ -216,7 +202,6 @@ export default function Auth() {
               <p className="text-[11px]" style={{ color: '#999' }}>Updates & support</p>
             </div>
           </a>
-        </div>
       </div>
     </div>
   );
