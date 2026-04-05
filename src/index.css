@@ -103,8 +103,11 @@ html {
 @layer components {
 
   .glass-card {
-    @apply relative overflow-hidden rounded-2xl bg-card border border-border;
-    box-shadow: var(--shadow-soft);
+    @apply relative overflow-hidden rounded-2xl border;
+    background: rgba(255,255,255,.85);
+    border-color: rgba(236,72,153,.12);
+    box-shadow: 0 4px 20px rgba(236,72,153,.06), 0 1px 3px rgba(0,0,0,.04);
+    backdrop-filter: blur(8px);
   }
 
   .three-d-card {
