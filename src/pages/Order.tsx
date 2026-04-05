@@ -573,11 +573,6 @@ export default function Order() {
       return;
     }
 
-    // STEP 1: Check subscription FIRST (before balance)
-    if (!hasActiveSubscription) {
-      setShowSubscriptionDialog(true);
-      return;
-    }
 
     // STEP 2: After subscription confirmed, check balance
     if (!wallet || wallet.balance <= 0) {
