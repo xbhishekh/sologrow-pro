@@ -11,6 +11,42 @@ const supabase = createClient(
   Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
 )
 
+// Errors where we should try the NEXT provider account
+const TRY_NEXT_ERRORS = [
+  'active order with this link',
+  'wait until order being completed',
+  'already has an order',
+  'order in progress',
+  'link currently active',
+  'processing previous order',
+  'wait for completion',
+  'processing another transaction',
+  'balance',
+  'not have enough',
+  'invalid api key',
+  'api key not found',
+  'unauthorized',
+  'quantity less than minimal',
+  'quantity less than minimum',
+  'min quantity',
+  'service not found',
+  'incorrect service',
+  'invalid service',
+  'service unavailable',
+  'service is not available',
+  'disabled',
+  'maintenance',
+  'rate limit',
+  'timeout',
+  'temporarily',
+  'too many requests',
+]
+
+function shouldTryNextProvider(errorMsg: string): boolean {
+  const lower = errorMsg.toLowerCase()
+  return TRY_NEXT_ERRORS.some(e => lower.includes(e))
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
@@ -48,41 +84,152 @@ serve(async (req) => {
       }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
     }
 
-    const { data: provider, error: providerError } = await supabase.from('providers').select('*').eq('id', order.service?.provider_id).single()
+    // ========== MULTI-PROVIDER ROTATION ==========
+    // 1. Try service_provider_mapping first (multiple accounts)
+    // 2. Fall back to legacy provider if no mappings exist
     
-    if (providerError || !provider) return new Response(JSON.stringify({ error: 'Provider not found' }), { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+    const serviceId = order.service_id
+    const providerId = order.service?.provider_id
+    
+    // Get all active provider account mappings for this service
+    const { data: mappings } = await supabase
+      .from('service_provider_mapping')
+      .select('*, provider_account:provider_accounts(*)')
+      .eq('service_id', serviceId)
+      .eq('is_active', true)
+      .order('sort_order', { ascending: true })
 
-    const quantityToSend = order.quantity
-    const formData = new URLSearchParams()
-    formData.append('key', provider.api_key)
-    formData.append('action', 'add')
-    formData.append('service', order.service?.provider_service_id || '')
-    formData.append('link', order.link)
-    formData.append('quantity', quantityToSend.toString())
+    // Build list of providers to try
+    interface ProviderOption {
+      name: string
+      apiKey: string
+      apiUrl: string
+      providerServiceId: string
+      accountId?: string
+    }
+    
+    const providerOptions: ProviderOption[] = []
 
-    const response = await fetch(provider.api_url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: formData.toString()
-    })
+    if (mappings && mappings.length > 0) {
+      // Sort by priority, then LRU as tiebreaker
+      const sorted = [...mappings].sort((a, b) => {
+        const ap = a.sort_order || 0
+        const bp = b.sort_order || 0
+        if (ap !== bp) return ap - bp
+        const at = a.provider_account?.last_used_at ? new Date(a.provider_account.last_used_at).getTime() : 0
+        const bt = b.provider_account?.last_used_at ? new Date(b.provider_account.last_used_at).getTime() : 0
+        return at - bt
+      })
 
-    const responseText = await response.text()
-    let result
-    try { result = JSON.parse(responseText) } catch { result = { error: responseText } }
-
-    if (result.error) {
-      const errorMsg = typeof result.error === 'string' ? result.error : JSON.stringify(result.error)
-      await supabase.from('orders').update({ status: 'failed', error_message: errorMsg }).eq('id', order_id)
-      return new Response(JSON.stringify({ success: false, error: errorMsg }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+      for (const m of sorted) {
+        const acc = m.provider_account
+        if (acc && acc.is_active) {
+          providerOptions.push({
+            name: acc.name,
+            apiKey: acc.api_key,
+            apiUrl: acc.api_url,
+            providerServiceId: m.provider_service_id,
+            accountId: acc.id,
+          })
+        }
+      }
     }
 
-    const providerOrderId = result.order?.toString() || result.id?.toString() || 'unknown'
+    // Fallback: legacy single provider
+    if (providerOptions.length === 0 && providerId) {
+      const { data: provider } = await supabase.from('providers').select('*').eq('id', providerId).single()
+      if (provider) {
+        providerOptions.push({
+          name: provider.name,
+          apiKey: provider.api_key,
+          apiUrl: provider.api_url,
+          providerServiceId: order.service?.provider_service_id || '',
+        })
+      }
+    }
 
-    await supabase.from('orders').update({ status: 'processing', provider_order_id: providerOrderId, error_message: null }).eq('id', order_id)
+    if (providerOptions.length === 0) {
+      await supabase.from('orders').update({ status: 'failed', error_message: 'No provider available' }).eq('id', order_id)
+      return new Response(JSON.stringify({ error: 'No provider available for this service' }), { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+    }
 
-    return new Response(JSON.stringify({ success: true, provider_order_id: providerOrderId }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+    // Try each provider in order until one succeeds
+    let lastError = ''
+    
+    for (const provider of providerOptions) {
+      console.log(`[process-order] Trying provider: ${provider.name}`)
+      
+      const formData = new URLSearchParams()
+      formData.append('key', provider.apiKey)
+      formData.append('action', 'add')
+      formData.append('service', provider.providerServiceId)
+      formData.append('link', order.link)
+      formData.append('quantity', order.quantity.toString())
+
+      try {
+        const controller = new AbortController()
+        const timeoutId = setTimeout(() => controller.abort(), 15000)
+        
+        const response = await fetch(provider.apiUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: formData.toString(),
+          signal: controller.signal,
+        })
+        clearTimeout(timeoutId)
+
+        const responseText = await response.text()
+        let result
+        try { result = JSON.parse(responseText) } catch { result = { error: responseText } }
+
+        if (result.error) {
+          const errorMsg = typeof result.error === 'string' ? result.error : JSON.stringify(result.error)
+          console.log(`[process-order] Provider ${provider.name} error: ${errorMsg}`)
+          lastError = errorMsg
+          
+          // If this error means we should try another provider, continue
+          if (shouldTryNextProvider(errorMsg) && providerOptions.indexOf(provider) < providerOptions.length - 1) {
+            console.log(`[process-order] Trying next provider...`)
+            continue
+          }
+          
+          // Last provider or permanent error — fail the order
+          await supabase.from('orders').update({ status: 'failed', error_message: errorMsg }).eq('id', order_id)
+          return new Response(JSON.stringify({ success: false, error: errorMsg }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+        }
+
+        // SUCCESS!
+        const providerOrderId = result.order?.toString() || result.id?.toString() || 'unknown'
+        
+        await supabase.from('orders').update({ 
+          status: 'processing', 
+          provider_order_id: providerOrderId, 
+          error_message: null 
+        }).eq('id', order_id)
+
+        // Update last_used_at for the account
+        if (provider.accountId) {
+          await supabase.from('provider_accounts').update({ 
+            last_used_at: new Date().toISOString() 
+          }).eq('id', provider.accountId)
+        }
+
+        console.log(`[process-order] ✅ Success via ${provider.name}, provider order: ${providerOrderId}`)
+        return new Response(JSON.stringify({ success: true, provider_order_id: providerOrderId }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+        
+      } catch (fetchError: any) {
+        console.log(`[process-order] Network error with ${provider.name}: ${fetchError.message}`)
+        lastError = `Network error: ${fetchError.message}`
+        // Try next provider
+        continue
+      }
+    }
+
+    // All providers failed
+    await supabase.from('orders').update({ status: 'failed', error_message: `All providers failed. Last: ${lastError}` }).eq('id', order_id)
+    return new Response(JSON.stringify({ success: false, error: `All providers failed. Last: ${lastError}` }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
 
   } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), { status: 500 })
+    return new Response(JSON.stringify({ error: error.message }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
   }
 })
