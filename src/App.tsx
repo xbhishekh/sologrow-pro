@@ -94,7 +94,7 @@ const App = () => {
             <AppErrorBoundary>
               <BrowserRouter>
                 <ScrollToTop />
-                <GlobalSubscriptionGuard>
+                
                   <Routes>
                     {/* User pages */}
                     <Route path="/" element={<Index />} />
