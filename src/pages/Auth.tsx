@@ -162,11 +162,9 @@ export default function Auth() {
 
         {/* Logo Section */}
         <div className="flex flex-col items-center mb-10 text-center">
-          <div className="w-20 h-20 bg-black border-2 border-white/20 rounded-[2.5rem] flex items-center justify-center mb-6 overflow-hidden p-0">
-            <Zap className="w-10 h-10 text-[#0ea5e9] drop-shadow-[0_0_15px_rgba(14,165,233,0.5)]" />
-          </div>
-          <h1 className="text-4xl font-[1000] text-white tracking-tighter mb-1">Whopautopailot</h1>
-          <p className="text-[11px] font-black uppercase tracking-[0.5em] text-[#0ea5e9] opacity-80">AUTHENTICATION</p>
+          <img src="/og-image.jpg" alt="OrganicSMM" className="w-20 h-20 rounded-[2.5rem] object-cover mb-6 shadow-lg shadow-pink-500/20 border-2 border-pink-500/20" />
+          <h1 className="text-4xl font-[1000] text-white tracking-tighter mb-1">OrganicSMM</h1>
+          <p className="text-[11px] font-black uppercase tracking-[0.5em] text-pink-400 opacity-80">AUTHENTICATION</p>
         </div>
 
         {/* The Glass Card Container */}
