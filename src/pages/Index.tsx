@@ -1,319 +1,190 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import {
-  ArrowRight,
-  Eye,
-  Star,
-  Shield,
-  Sparkles,
-  BarChart3,
-  Globe,
-  Clock3,
-  TrendingUp,
-  Users,
-  Wallet,
-  CheckCircle2,
-  Zap,
-  PlayCircle,
-} from 'lucide-react';
+import { ArrowRight, Eye, Star, Shield, Sparkles, BarChart3, Globe, Clock3, Zap, TrendingUp, CheckCircle2, PlayCircle } from 'lucide-react';
 import logo from '@/assets/logo.jpg';
-import './index-light.css';
 
 const Index = () => {
   return (
-    <main className="landing-shell overflow-x-hidden">
-      {/* ─── NAV ─── */}
-      <div className="relative z-50 px-3 py-3 sm:px-4 sm:py-5">
-        <div className="landing-container landing-glass-nav rounded-[28px] px-4 py-4 sm:px-6 sm:py-5">
-          <div className="flex items-center justify-between">
-            <Link to="/" className="flex items-center gap-3">
-              <img src={logo} alt="OrganicSMM" className="h-11 w-11 rounded-2xl object-cover shadow-lg" />
-              <div>
-                <p className="text-lg font-black tracking-tight" style={{ color: 'hsl(234 28% 16%)' }}>OrganicSMM</p>
-                <p className="text-[9px] font-bold uppercase tracking-[.22em]" style={{ color: 'hsl(331 83% 62%)' }}>Updated Version</p>
-              </div>
+    <div className="min-h-screen" style={{ background: '#fafaf8', color: '#1a1a2e', fontFamily: "'Inter', system-ui, sans-serif" }}>
+
+      {/* Nav */}
+      <header className="sticky top-0 z-50" style={{ background: 'rgba(250,250,248,.85)', backdropFilter: 'blur(16px)', borderBottom: '1px solid rgba(0,0,0,.06)' }}>
+        <div className="max-w-[1100px] mx-auto flex items-center justify-between px-6 h-16">
+          <Link to="/" className="flex items-center gap-2.5">
+            <img src={logo} alt="OrganicSMM" className="w-9 h-9 rounded-lg object-cover" />
+            <span className="text-[15px] font-bold tracking-tight" style={{ color: '#1a1a2e' }}>OrganicSMM</span>
+          </Link>
+          <div className="flex items-center gap-6">
+            <Link to="/auth" className="text-[13px] font-medium hidden sm:block" style={{ color: '#666' }}>Log in</Link>
+            <Link to="/auth" className="text-[13px] font-semibold text-white px-5 py-2 rounded-lg flex items-center gap-1.5" style={{ background: '#1a1a2e' }}>
+              Get started <ArrowRight className="w-3.5 h-3.5" />
             </Link>
-            <div className="flex items-center gap-2 sm:gap-3">
-              <Link to="/auth" className="hidden sm:block px-5 py-2.5 text-xs font-bold uppercase tracking-wider" style={{ color: 'hsl(228 13% 45%)' }}>
-                Login
-              </Link>
-              <Link to="/auth" className="landing-primary-btn text-xs sm:text-sm font-bold uppercase tracking-wider">
-                Get Started <ArrowRight className="w-4 h-4" />
-              </Link>
-            </div>
           </div>
         </div>
-      </div>
+      </header>
 
-      {/* ─── HERO ─── */}
-      <section className="landing-container grid items-center gap-14 px-3 pb-20 pt-8 sm:px-4 md:grid-cols-[1fr_1fr] md:pt-14 lg:gap-8 lg:pb-28">
-        <div className="text-center md:text-left">
-          <div className="landing-badge mb-8 inline-flex">
-            <span className="landing-badge-dot" />
-            <span className="text-[11px] font-bold uppercase tracking-[.22em]" style={{ color: 'hsl(228 13% 45%)' }}>
-              Platform Updated • V3.0
-            </span>
+      {/* Hero */}
+      <section className="max-w-[1100px] mx-auto px-6 pt-20 sm:pt-28 pb-20">
+        <div className="max-w-2xl">
+          <div className="inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 mb-8" style={{ background: '#f0f0ec', border: '1px solid rgba(0,0,0,.06)' }}>
+            <span className="w-1.5 h-1.5 rounded-full" style={{ background: '#22c55e' }} />
+            <span className="text-[11px] font-medium" style={{ color: '#888' }}>Platform updated — v3.0</span>
           </div>
 
-          <h1 className="landing-hero-title font-black">
-            <span style={{ color: 'hsl(234 28% 16%)' }}>Grow </span>
-            <span className="landing-word-accent">Organic.</span>
-            <br />
-            <span style={{ color: 'hsl(234 28% 16%)' }}>Scale </span>
-            <span className="landing-word-accent">Smarter.</span>
+          <h1 className="text-[clamp(2.4rem,5.5vw,4.2rem)] font-extrabold leading-[1.08] tracking-[-0.03em] mb-6" style={{ color: '#1a1a2e', fontFamily: "'Outfit', system-ui, sans-serif" }}>
+            Grow your social media the way it should be done.
           </h1>
 
-          <p className="mx-auto mt-7 max-w-xl text-base font-medium leading-8 md:mx-0 md:text-lg" style={{ color: 'hsl(228 13% 45%)' }}>
-            The premium social media growth engine that delivers{' '}
-            <strong style={{ color: 'hsl(234 28% 16%)' }}>real organic engagement</strong>{' '}
-            with AI-powered delivery patterns indistinguishable from genuine activity.
+          <p className="text-[17px] leading-[1.7] mb-10 max-w-lg" style={{ color: '#666' }}>
+            OrganicSMM delivers real engagement with natural delivery patterns. Add funds, pick a service, and let the platform handle the rest.
           </p>
 
-          <div className="mt-9 flex flex-col items-center gap-4 sm:flex-row sm:flex-wrap md:items-start">
-            <Link to="/auth" className="landing-primary-btn w-full sm:w-auto text-sm font-bold">
-              Start Growing Now <ArrowRight className="w-4 h-4" />
+          <div className="flex flex-wrap gap-3 mb-12">
+            <Link to="/auth" className="h-11 px-6 rounded-lg text-[13px] font-semibold text-white flex items-center gap-2" style={{ background: '#1a1a2e' }}>
+              Start growing <ArrowRight className="w-3.5 h-3.5" />
             </Link>
-            <Link to="/auth" className="landing-secondary-btn w-full sm:w-auto text-sm font-semibold">
-              <Eye className="w-4 h-4" /> View Services
+            <Link to="/auth" className="h-11 px-6 rounded-lg text-[13px] font-medium flex items-center gap-2" style={{ color: '#555', border: '1px solid rgba(0,0,0,.1)' }}>
+              <Eye className="w-3.5 h-3.5" /> View services
             </Link>
           </div>
 
-          {/* Social proof */}
-          <div className="mt-9 flex flex-wrap items-center justify-center gap-3 md:justify-start">
-            <div className="landing-proof-chip flex items-center gap-3 rounded-full px-4 py-2.5">
-              <div className="flex -space-x-2">
-                {[
-                  { l: 'A', bg: 'hsl(331 83% 62%)' },
-                  { l: 'S', bg: 'hsl(271 82% 63%)' },
-                  { l: 'R', bg: 'hsl(46 96% 61%)' },
-                  { l: 'M', bg: 'hsl(164 72% 57%)' },
-                ].map((u) => (
-                  <div key={u.l} className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-white text-[10px] font-black text-white" style={{ background: u.bg }}>
-                    {u.l}
+          <div className="flex items-center gap-5 flex-wrap">
+            <div className="flex items-center gap-2">
+              <div className="flex -space-x-1.5">
+                {['#e74c8b','#8b5cf6','#f59e0b','#10b981'].map((c, i) => (
+                  <div key={i} className="w-6 h-6 rounded-full border-2 border-[#fafaf8] text-[8px] font-bold text-white flex items-center justify-center" style={{ background: c }}>
+                    {['A','S','R','M'][i]}
                   </div>
                 ))}
               </div>
-              <span className="text-xs font-semibold" style={{ color: 'hsl(228 13% 45%)' }}>2,400+ Active Users</span>
+              <span className="text-[12px]" style={{ color: '#999' }}>2,400+ users</span>
             </div>
-            <div className="landing-proof-chip flex items-center gap-2 rounded-full px-4 py-2.5">
-              {[...Array(5)].map((_, i) => <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />)}
-              <span className="text-xs font-semibold ml-1" style={{ color: 'hsl(228 13% 45%)' }}>4.9/5 Rating</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Right visual */}
-        <div className="landing-visual hidden md:block">
-          <div className="landing-blob landing-blob--main" />
-          <div className="landing-blob landing-blob--top" />
-          <div className="landing-blob landing-blob--side" />
-
-          <div className="landing-floating-card landing-floating-card--top">
-            <span className="landing-icon-bubble" style={{ background: 'hsl(164 72% 57% / .16)', color: 'hsl(164 72% 32%)' }}>
-              <CheckCircle2 className="h-5 w-5" />
-            </span>
-            <div>
-              <p className="text-sm font-bold" style={{ color: 'hsl(234 28% 16%)' }}>Safe Delivery</p>
-              <p className="text-xs font-medium" style={{ color: 'hsl(228 13% 45%)' }}>Human-like pacing</p>
-            </div>
-          </div>
-
-          <div className="landing-floating-card landing-floating-card--mid">
-            <span className="landing-icon-bubble" style={{ background: 'hsl(331 83% 62% / .14)', color: 'hsl(331 72% 48%)' }}>
-              <Zap className="h-5 w-5" />
-            </span>
-            <div>
-              <p className="text-sm font-bold" style={{ color: 'hsl(234 28% 16%)' }}>Fast Fulfillment</p>
-              <p className="text-xs font-medium" style={{ color: 'hsl(228 13% 45%)' }}>Multi-provider</p>
-            </div>
-          </div>
-
-          <div className="landing-floating-card landing-floating-card--bottom">
-            <span className="landing-icon-bubble" style={{ background: 'hsl(46 96% 61% / .16)', color: 'hsl(38 88% 38%)' }}>
-              <TrendingUp className="h-5 w-5" />
-            </span>
-            <div>
-              <p className="text-sm font-bold" style={{ color: 'hsl(234 28% 16%)' }}>Live Results</p>
-              <p className="text-xs font-medium" style={{ color: 'hsl(228 13% 45%)' }}>Track every order</p>
-            </div>
-          </div>
-
-          <div className="landing-device">
-            <div className="landing-device-screen">
-              <div className="landing-screen-bar" />
-              <div className="landing-screen-card landing-screen-card--hero mb-4 flex items-center justify-between gap-4">
-                <div>
-                  <p className="text-[10px] font-bold uppercase tracking-[.2em]" style={{ color: 'hsl(228 13% 45%)' }}>Growth Dashboard</p>
-                  <p className="mt-1 text-xl font-black tracking-tight" style={{ color: 'hsl(234 28% 16%)' }}>Updated Version</p>
-                </div>
-                <span className="rounded-full px-3 py-1.5 text-[10px] font-bold" style={{ background: 'hsl(164 72% 57% / .14)', color: 'hsl(164 72% 32%)' }}>Active</span>
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div className="landing-screen-card rounded-xl p-3">
-                  <p className="text-[10px] font-semibold" style={{ color: 'hsl(228 13% 45%)' }}>Wallet</p>
-                  <p className="mt-1 text-xl font-black" style={{ color: 'hsl(234 28% 16%)' }}>$500</p>
-                  <p className="mt-1 text-[10px] font-medium" style={{ color: 'hsl(164 72% 32%)' }}>Ready</p>
-                </div>
-                <div className="landing-screen-card rounded-xl p-3">
-                  <p className="text-[10px] font-semibold" style={{ color: 'hsl(228 13% 45%)' }}>Orders</p>
-                  <p className="mt-1 text-xl font-black" style={{ color: 'hsl(234 28% 16%)' }}>Live</p>
-                  <p className="mt-1 text-[10px] font-medium" style={{ color: 'hsl(331 72% 48%)' }}>Tracking</p>
-                </div>
-              </div>
-              <div className="landing-screen-card mt-3 rounded-xl p-3">
-                <div className="flex items-center justify-between mb-3">
-                  <p className="text-xs font-bold" style={{ color: 'hsl(234 28% 16%)' }}>Performance</p>
-                  <PlayCircle className="w-4 h-4" style={{ color: 'hsl(331 72% 52%)' }} />
-                </div>
-                <div className="landing-mini-chart" />
-              </div>
+            <div className="flex items-center gap-1">
+              {[...Array(5)].map((_, i) => <Star key={i} className="w-3 h-3 fill-amber-400 text-amber-400" />)}
+              <span className="text-[12px] ml-1" style={{ color: '#999' }}>4.9/5</span>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ─── STATS ─── */}
-      <section className="py-6" style={{ borderTop: '1px solid hsl(26 28% 87% / .6)', borderBottom: '1px solid hsl(26 28% 87% / .6)', background: 'hsl(0 0% 100% / .5)' }}>
-        <div className="landing-container grid grid-cols-1 gap-3 px-3 sm:grid-cols-3 sm:px-4">
+      {/* Numbers */}
+      <section className="border-y" style={{ borderColor: 'rgba(0,0,0,.06)' }}>
+        <div className="max-w-[1100px] mx-auto grid grid-cols-3">
           {[
-            { v: '10M+', l: 'Engagement Delivered' },
-            { v: '99.8%', l: 'Success Rate' },
-            { v: '24/7', l: 'Auto Delivery' },
-          ].map((s) => (
-            <div key={s.l} className="landing-surface-card rounded-2xl px-6 py-7 text-center">
-              <p className="text-4xl font-black tracking-tight" style={{ color: 'hsl(234 28% 16%)' }}>{s.v}</p>
-              <p className="mt-2 text-[10px] font-bold uppercase tracking-[.2em]" style={{ color: 'hsl(228 13% 45%)' }}>{s.l}</p>
+            { n: '10M+', l: 'Engagement delivered' },
+            { n: '99.8%', l: 'Success rate' },
+            { n: '24/7', l: 'Auto delivery' },
+          ].map((s, i) => (
+            <div key={s.l} className="py-10 text-center" style={{ borderRight: i < 2 ? '1px solid rgba(0,0,0,.06)' : 'none' }}>
+              <p className="text-3xl sm:text-4xl font-extrabold tracking-tight" style={{ color: '#1a1a2e' }}>{s.n}</p>
+              <p className="text-[11px] font-medium mt-1.5 uppercase tracking-wider" style={{ color: '#aaa' }}>{s.l}</p>
             </div>
           ))}
         </div>
       </section>
 
-      {/* ─── PLATFORMS ─── */}
+      {/* Platforms */}
       <section className="py-14">
-        <div className="landing-container px-3 sm:px-4">
-          <p className="text-center text-[10px] font-black uppercase tracking-[.3em]" style={{ color: 'hsl(228 13% 45%)' }}>Works with every major platform</p>
-          <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
+        <div className="max-w-[1100px] mx-auto px-6">
+          <p className="text-center text-[11px] font-medium uppercase tracking-widest mb-6" style={{ color: '#bbb' }}>Supported platforms</p>
+          <div className="flex items-center justify-center gap-8 flex-wrap">
             {['Instagram', 'YouTube', 'TikTok', 'Twitter/X', 'Facebook', 'Telegram'].map((p) => (
-              <div key={p} className="landing-platform-chip rounded-full px-5 py-3 text-sm font-bold" style={{ color: 'hsl(234 28% 16%)' }}>{p}</div>
+              <span key={p} className="text-[13px] font-semibold" style={{ color: '#999' }}>{p}</span>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ─── FEATURES ─── */}
+      {/* Features */}
       <section className="py-20">
-        <div className="landing-container px-3 sm:px-4">
-          <div className="text-center mb-14">
-            <p className="text-xs font-black uppercase tracking-[.3em]" style={{ color: 'hsl(331 83% 62%)' }}>Why OrganicSMM</p>
-            <h2 className="mt-4 text-4xl sm:text-5xl font-black tracking-tight" style={{ color: 'hsl(234 28% 16%)' }}>
-              Built for Performance
-            </h2>
-            <p className="mt-4 text-base font-medium" style={{ color: 'hsl(228 13% 45%)' }}>
-              Every feature engineered to deliver genuine, algorithm-safe growth.
-            </p>
-          </div>
+        <div className="max-w-[1100px] mx-auto px-6">
+          <p className="text-[11px] font-semibold uppercase tracking-widest mb-3" style={{ color: '#e74c8b' }}>Features</p>
+          <h2 className="text-3xl sm:text-[2.6rem] font-extrabold tracking-tight mb-4" style={{ color: '#1a1a2e', fontFamily: "'Outfit', system-ui, sans-serif" }}>
+            Everything you need, nothing you don't.
+          </h2>
+          <p className="text-[15px] mb-14 max-w-lg" style={{ color: '#888' }}>
+            Clean tools for real growth. No bloat, no gimmicks.
+          </p>
 
-          <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-5">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-px rounded-2xl overflow-hidden" style={{ background: 'rgba(0,0,0,.06)' }}>
             {[
-              { icon: Clock3, title: 'Organic Scheduler', desc: 'AI-driven variable speed delivery that mirrors real viral surge patterns across time zones.', bg: 'hsl(164 72% 57% / .12)', fg: 'hsl(164 72% 36%)' },
-              { icon: Shield, title: 'Stealth Protocol', desc: 'Zero-footprint delivery with residential proxy rotation and encrypted trails.', bg: 'hsl(271 82% 63% / .1)', fg: 'hsl(271 64% 48%)' },
-              { icon: Globe, title: 'Multi-Provider', desc: 'Intelligent failover across multiple providers for 99.9% uptime guarantee.', bg: 'hsl(331 83% 62% / .1)', fg: 'hsl(331 72% 50%)' },
-              { icon: Sparkles, title: 'AI Autopilot', desc: 'Content-aware delivery that adapts speed based on post engagement signals.', bg: 'hsl(46 96% 61% / .14)', fg: 'hsl(38 88% 40%)' },
-              { icon: Zap, title: 'Anti-Detection', desc: 'Randomized variance, peak-hour boosting, and human behavior simulation.', bg: 'hsl(197 82% 60% / .12)', fg: 'hsl(197 76% 40%)' },
-              { icon: BarChart3, title: 'Live Analytics', desc: 'Real-time dashboards tracking every order, run, and provider response.', bg: 'hsl(148 66% 52% / .1)', fg: 'hsl(148 62% 34%)' },
+              { icon: Clock3, title: 'Organic scheduling', desc: 'Variable speed delivery that mirrors how real engagement actually happens.' },
+              { icon: Shield, title: 'Account safety', desc: 'Patterns tuned to look human. No spikes, no red flags.' },
+              { icon: Globe, title: 'Multi-provider routing', desc: 'Orders flow through multiple providers for better stability.' },
+              { icon: Sparkles, title: 'Smart delivery', desc: 'Speed adapts based on order size and platform best practices.' },
+              { icon: Zap, title: 'Instant start', desc: 'Orders begin processing within minutes of placement.' },
+              { icon: BarChart3, title: 'Live tracking', desc: 'Watch progress, history, and delivery status in real time.' },
             ].map((f) => (
-              <div key={f.title} className="landing-feature-card rounded-[2rem] p-7">
-                <div className="mb-5 inline-flex h-14 w-14 items-center justify-center rounded-xl" style={{ background: f.bg, color: f.fg }}>
-                  <f.icon className="w-6 h-6" />
-                </div>
-                <h3 className="text-xl font-black tracking-tight" style={{ color: 'hsl(234 28% 16%)' }}>{f.title}</h3>
-                <p className="mt-3 text-sm font-medium leading-7" style={{ color: 'hsl(228 13% 45%)' }}>{f.desc}</p>
+              <div key={f.title} className="p-8" style={{ background: '#fafaf8' }}>
+                <f.icon className="w-5 h-5 mb-4" style={{ color: '#1a1a2e' }} />
+                <h3 className="text-[15px] font-bold mb-2" style={{ color: '#1a1a2e' }}>{f.title}</h3>
+                <p className="text-[13px] leading-relaxed" style={{ color: '#888' }}>{f.desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ─── STEPS ─── */}
+      {/* How it works */}
       <section className="py-20">
-        <div className="landing-container px-3 sm:px-4">
-          <div className="grid gap-10 lg:grid-cols-[.9fr_1.1fr] lg:items-center">
-            <div>
-              <p className="text-xs font-black uppercase tracking-[.3em]" style={{ color: 'hsl(164 72% 38%)' }}>Simple Process</p>
-              <h2 className="mt-4 text-4xl sm:text-5xl font-black tracking-tight" style={{ color: 'hsl(234 28% 16%)' }}>
-                Three Steps to Growth
-              </h2>
-              <p className="mt-4 text-base font-medium leading-8" style={{ color: 'hsl(228 13% 45%)' }}>
-                Signup, add funds, place the order, and track everything — no subscription wall, no cluttered flow.
-              </p>
-            </div>
+        <div className="max-w-[1100px] mx-auto px-6">
+          <p className="text-[11px] font-semibold uppercase tracking-widest mb-3" style={{ color: '#10b981' }}>How it works</p>
+          <h2 className="text-3xl sm:text-[2.6rem] font-extrabold tracking-tight mb-14" style={{ color: '#1a1a2e', fontFamily: "'Outfit', system-ui, sans-serif" }}>
+            Three steps. That's it.
+          </h2>
 
-            <div className="grid gap-4">
-              {[
-                { n: '01', title: 'Create Account', desc: 'Quick signup, straight access to the platform.' },
-                { n: '02', title: 'Add Funds & Order', desc: 'Top up wallet, select service, enter quantity, place order.' },
-                { n: '03', title: 'Track Growth', desc: 'Follow order progress and delivery in real-time.' },
-              ].map((s) => (
-                <div key={s.n} className="landing-step-card rounded-[1.8rem] p-6 sm:p-7">
-                  <div className="flex items-start gap-5">
-                    <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl text-base font-black text-white" style={{ background: 'linear-gradient(135deg, hsl(331 83% 62%), hsl(271 82% 63%))', boxShadow: '0 14px 28px hsl(331 83% 62% / .2)' }}>
-                      {s.n}
-                    </div>
-                    <div>
-                      <h3 className="text-xl font-black tracking-tight" style={{ color: 'hsl(234 28% 16%)' }}>{s.title}</h3>
-                      <p className="mt-2 text-sm font-medium leading-7" style={{ color: 'hsl(228 13% 45%)' }}>{s.desc}</p>
-                    </div>
-                  </div>
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              { n: '1', title: 'Create account', desc: 'Sign up with email. Takes about 30 seconds.' },
+              { n: '2', title: 'Add funds & order', desc: 'Top up your wallet, pick a service, enter the link and quantity.' },
+              { n: '3', title: 'Track results', desc: 'Watch your order progress live from the dashboard.' },
+            ].map((s) => (
+              <div key={s.n}>
+                <div className="w-10 h-10 rounded-lg text-sm font-bold text-white flex items-center justify-center mb-5" style={{ background: '#1a1a2e' }}>
+                  {s.n}
                 </div>
-              ))}
-            </div>
+                <h3 className="text-[17px] font-bold mb-2" style={{ color: '#1a1a2e' }}>{s.title}</h3>
+                <p className="text-[14px] leading-relaxed" style={{ color: '#888' }}>{s.desc}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* ─── CTA ─── */}
-      <section className="pb-20 pt-6">
-        <div className="landing-container px-3 sm:px-4">
-          <div className="landing-cta-panel rounded-[2.4rem] px-6 py-12 text-center sm:px-12 sm:py-16">
-            <img src={logo} alt="" className="mx-auto h-16 w-16 rounded-xl object-cover shadow-lg" />
-            <p className="mt-6 text-xs font-black uppercase tracking-[.3em]" style={{ color: 'hsl(331 83% 62%)' }}>Premium Platform</p>
-            <h2 className="mx-auto mt-4 max-w-2xl text-4xl sm:text-5xl font-black tracking-tight" style={{ color: 'hsl(234 28% 16%)' }}>
-              Ready to Grow Your Social Presence?
+      {/* CTA */}
+      <section className="py-20">
+        <div className="max-w-[1100px] mx-auto px-6">
+          <div className="rounded-2xl p-10 sm:p-16 text-center" style={{ background: '#1a1a2e' }}>
+            <img src={logo} alt="" className="w-12 h-12 rounded-lg object-cover mx-auto mb-6" />
+            <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-white mb-3" style={{ fontFamily: "'Outfit', system-ui, sans-serif" }}>
+              Ready to start?
             </h2>
-            <p className="mx-auto mt-4 max-w-xl text-base font-medium leading-8" style={{ color: 'hsl(228 13% 45%)' }}>
-              Join thousands of creators and businesses growing organically. No subscriptions, no commitments.
+            <p className="text-[15px] text-white/50 mb-8 max-w-md mx-auto">
+              No subscriptions, no commitments. Just sign up, add funds, and grow.
             </p>
-            <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
-              <Link to="/auth" className="landing-primary-btn w-full sm:w-auto text-sm font-bold">
-                Create Free Account <ArrowRight className="w-4 h-4" />
-              </Link>
-              <Link to="/auth" className="landing-secondary-btn w-full sm:w-auto text-sm font-semibold">
-                Explore Services
-              </Link>
-            </div>
+            <Link to="/auth" className="inline-flex h-11 px-7 rounded-lg text-[13px] font-semibold items-center gap-2" style={{ background: 'white', color: '#1a1a2e' }}>
+              Create free account <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
           </div>
         </div>
       </section>
 
-      {/* ─── FOOTER ─── */}
-      <footer style={{ borderTop: '1px solid hsl(26 28% 87% / .7)', background: 'hsl(0 0% 100% / .5)' }} className="py-8">
-        <div className="landing-container flex flex-col sm:flex-row items-center justify-between gap-4 px-3 sm:px-4">
-          <div className="flex items-center gap-3">
-            <img src={logo} alt="" className="h-10 w-10 rounded-2xl object-cover" />
-            <div>
-              <p className="text-sm font-black" style={{ color: 'hsl(234 28% 16%)' }}>OrganicSMM</p>
-              <p className="text-xs font-semibold" style={{ color: 'hsl(228 13% 45%)' }}>Updated Version</p>
-            </div>
+      {/* Footer */}
+      <footer style={{ borderTop: '1px solid rgba(0,0,0,.06)' }} className="py-8">
+        <div className="max-w-[1100px] mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-2">
+            <img src={logo} alt="" className="w-7 h-7 rounded-md object-cover" />
+            <span className="text-[13px] font-semibold" style={{ color: '#1a1a2e' }}>OrganicSMM</span>
           </div>
-          <div className="flex gap-5 text-sm font-semibold" style={{ color: 'hsl(228 13% 45%)' }}>
-            <Link to="/terms" className="hover:opacity-70 transition-opacity">Terms</Link>
-            <Link to="/privacy" className="hover:opacity-70 transition-opacity">Privacy</Link>
-            <Link to="/refund" className="hover:opacity-70 transition-opacity">Refund</Link>
+          <div className="flex gap-5 text-[12px] font-medium" style={{ color: '#999' }}>
+            <Link to="/terms" className="hover:text-[#666] transition-colors">Terms</Link>
+            <Link to="/privacy" className="hover:text-[#666] transition-colors">Privacy</Link>
+            <Link to="/refund" className="hover:text-[#666] transition-colors">Refund</Link>
           </div>
-          <p className="text-xs font-semibold" style={{ color: 'hsl(228 13% 45%)' }}>© {new Date().getFullYear()} OrganicSMM</p>
+          <p className="text-[11px]" style={{ color: '#ccc' }}>© {new Date().getFullYear()} OrganicSMM</p>
         </div>
       </footer>
-    </main>
+    </div>
   );
 };
 
