@@ -645,22 +645,22 @@ export default function EngagementOrder() {
     <DashboardLayout>
       <div className="max-w-5xl mx-auto px-3 sm:px-6 lg:px-8 space-y-4 sm:space-y-6 pb-8">
         {/* Header with gradient - Compact on mobile */}
-        <div className="relative overflow-hidden glass-card p-4 sm:p-6 lg:p-8 bg-gradient-to-r from-foreground/5 via-transparent to-foreground/10">
+        <div className="relative overflow-hidden rounded-2xl p-4 sm:p-6 lg:p-8" style={{ background: 'linear-gradient(135deg, #831843, #be185d, #ec4899)', boxShadow: '0 8px 32px rgba(190,24,93,.25)' }}>
           <div className="relative z-10 text-center">
             <div className="inline-flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
-              <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl bg-foreground flex items-center justify-center shadow-lg shadow-foreground/20">
-                <Rocket className="h-6 w-6 sm:h-8 sm:w-8 text-background" />
+              <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl flex items-center justify-center" style={{ background: 'rgba(255,255,255,.2)', backdropFilter: 'blur(8px)' }}>
+                <Rocket className="h-6 w-6 sm:h-8 sm:w-8 text-white" />
               </div>
             </div>
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground mb-2 sm:mb-3 tracking-tight">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-2 sm:mb-3 tracking-tight">
               Organic Full Engagement
             </h1>
-            <p className="text-sm sm:text-base lg:text-lg text-muted-foreground max-w-lg mx-auto leading-relaxed">
+            <p className="text-sm sm:text-base lg:text-lg max-w-lg mx-auto leading-relaxed" style={{ color: 'rgba(255,255,255,.7)' }}>
               One link → All engagement types with organic settings
             </p>
           </div>
-          <div className="absolute top-0 right-0 w-32 sm:w-48 h-32 sm:h-48 bg-gradient-to-bl from-foreground/10 to-transparent rounded-full blur-3xl" />
-          <div className="absolute bottom-0 left-0 w-24 sm:w-36 h-24 sm:h-36 bg-gradient-to-tr from-foreground/10 to-transparent rounded-full blur-3xl" />
+          <div className="absolute top-0 right-0 w-32 sm:w-48 h-32 sm:h-48 bg-gradient-to-bl from-white/10 to-transparent rounded-full blur-3xl" />
+          <div className="absolute bottom-0 left-0 w-24 sm:w-36 h-24 sm:h-36 bg-gradient-to-tr from-white/10 to-transparent rounded-full blur-3xl" />
         </div>
 
         {/* AI Automation Toggles */}
