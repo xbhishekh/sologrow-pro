@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { useAuth } from '@/hooks/useAuth';
-import { useSubscription } from '@/hooks/useSubscription';
+
 import { useCurrency } from '@/hooks/useCurrency';
 import { supabase } from '@/integrations/supabase/client';
 import {
@@ -29,16 +29,13 @@ import { Button } from '@/components/ui/button';
 import { PageMeta } from '@/components/seo/PageMeta';
 import { Badge } from '@/components/ui/badge';
 import { format, formatDistanceToNow } from 'date-fns';
-import { SubscriptionRequestDialog } from '@/components/subscription/SubscriptionRequestDialog';
+
 import { useState } from 'react';
 
 export default function Dashboard() {
   const { user, wallet, profile } = useAuth();
-  const { subscription, hasActiveSubscription } = useSubscription();
   const { formatPrice } = useCurrency();
   const navigate = useNavigate();
-  const [showRequestDialog, setShowRequestDialog] = useState(false);
-  const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'lifetime'>('monthly');
 
   const { data: recentOrders } = useQuery({
     queryKey: ['recent-orders', user?.id],
@@ -127,12 +124,6 @@ export default function Dashboard() {
               <h1 className="text-3xl font-black tracking-tight text-white drop-shadow-2xl">
                 {profile?.full_name || 'User'}
               </h1>
-              {hasActiveSubscription && (
-                <Badge className="bg-primary text-black font-black flex items-center gap-1 px-3 py-1 shadow-lg shadow-primary/20 text-[10px] uppercase tracking-widest border-none">
-                  <Crown className="h-3.5 w-3.5 fill-current" />
-                  {subscription?.plan_type === 'lifetime' ? 'Lifetime Member' : 'Pro Console'}
-                </Badge>
-              )}
             </div>
           </div>
           <div className="flex gap-2.5">
@@ -156,31 +147,6 @@ export default function Dashboard() {
 
 
 
-        {/* Subscription Banner */}
-        {hasActiveSubscription && subscription && (
-          <div className="relative overflow-hidden rounded-[2.5rem] border border-primary/20 bg-primary/5 p-8">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-[100px] -mr-32 -mt-32" />
-            <div className="relative flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-              <div className="flex items-center gap-5">
-                <div className="w-16 h-16 rounded-3xl bg-primary flex items-center justify-center shadow-2xl shadow-primary/30 shrink-0">
-                  <Crown className="h-9 w-9 text-black fill-current" />
-                </div>
-                <div>
-                  <p className="font-black text-2xl tracking-tighter text-white">
-                    {subscription.plan_type === 'lifetime' ? 'Lifetime Member' : 'Pro Member'}
-                  </p>
-                  <p className="text-xs font-bold uppercase tracking-widest text-white/30">
-                    {subscription.plan_type === 'lifetime'
-                      ? 'UNLIMITED ACCESS FOREVER'
-                      : subscription.expires_at
-                        ? `Expires ${formatDistanceToNow(new Date(subscription.expires_at), { addSuffix: true })}`
-                        : 'Elite Access Active'}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
 
         {/* Stats Grid */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
@@ -381,11 +347,6 @@ export default function Dashboard() {
           ))}
         </div>
       </div>
-      <SubscriptionRequestDialog
-        open={showRequestDialog}
-        onOpenChange={setShowRequestDialog}
-        planType={selectedPlan}
-      />
     </DashboardLayout>
   );
 }

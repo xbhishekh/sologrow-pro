@@ -4,8 +4,6 @@ import { useQuery, useMutation } from '@tanstack/react-query';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
-import { useSubscription } from '@/hooks/useSubscription';
-import { SubscriptionCheckDialog } from '@/components/subscription/SubscriptionCheckDialog';
 import { OrganicTimelinePreview } from '@/components/organic/OrganicTimelinePreview';
 import { useServices } from '@/hooks/useServices';
 import { Button } from '@/components/ui/button';
@@ -72,8 +70,6 @@ export default function Order() {
   const navigate = useNavigate();
   const { user, profile, wallet, refreshWallet, isAdmin } = useAuth();
   const { formatPrice } = useCurrency();
-  const { hasActiveSubscription } = useSubscription();
-  const [showSubscriptionDialog, setShowSubscriptionDialog] = useState(false);
 
   const preselectedService = searchParams.get('service');
 
@@ -577,11 +573,6 @@ export default function Order() {
       return;
     }
 
-    // STEP 1: Check subscription FIRST (before balance)
-    if (!hasActiveSubscription) {
-      setShowSubscriptionDialog(true);
-      return;
-    }
 
     // STEP 2: After subscription confirmed, check balance
     if (!wallet || wallet.balance <= 0) {
@@ -1384,11 +1375,6 @@ export default function Order() {
         </div>
       </div>
 
-      {/* Subscription Check Dialog */}
-      <SubscriptionCheckDialog
-        open={showSubscriptionDialog}
-        onOpenChange={setShowSubscriptionDialog}
-      />
     </DashboardLayout>
   );
 }

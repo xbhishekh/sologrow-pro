@@ -9,7 +9,7 @@ import { CurrencyProvider } from "@/hooks/useCurrency";
 import { ScrollToTop } from "@/components/ScrollToTop";
 import { toast } from "sonner";
 import { AppErrorBoundary } from "@/components/app/AppErrorBoundary";
-import { GlobalSubscriptionGuard } from "@/components/subscription/GlobalSubscriptionGuard";
+
 
 // ALL pages eager-loaded for instantaneous navigation
 import Index from "./pages/Index";
@@ -36,7 +36,7 @@ import AdminUsers from "./pages/admin/AdminUsers";
 import AdminOrders from "./pages/admin/AdminOrders";
 import AdminBundles from "./pages/admin/AdminBundles";
 import AdminCronMonitor from "./pages/admin/AdminCronMonitor";
-import AdminSubscriptions from "./pages/admin/AdminSubscriptions";
+
 import AdminChat from "./pages/admin/AdminChat";
 import AdminDeposits from "./pages/admin/AdminDeposits";
 import AdminProviderAccounts from "./pages/admin/AdminProviderAccounts";
@@ -94,7 +94,7 @@ const App = () => {
             <AppErrorBoundary>
               <BrowserRouter>
                 <ScrollToTop />
-                <GlobalSubscriptionGuard>
+                
                   <Routes>
                     {/* User pages */}
                     <Route path="/" element={<Index />} />
@@ -121,7 +121,7 @@ const App = () => {
                     <Route path="/admin/orders" element={<AdminOrders />} />
                     <Route path="/admin/bundles" element={<AdminBundles />} />
                     <Route path="/admin/cron-monitor" element={<AdminCronMonitor />} />
-                    <Route path="/admin/subscriptions" element={<AdminSubscriptions />} />
+                    
                     <Route path="/admin/chat" element={<AdminChat />} />
                     <Route path="/admin/deposits" element={<AdminDeposits />} />
                     <Route path="/admin/provider-accounts" element={<AdminProviderAccounts />} />
@@ -133,7 +133,7 @@ const App = () => {
                     <Route path="/refund" element={<RefundPolicy />} />
                     <Route path="/cookies" element={<CookiePolicy />} />
                   </Routes>
-                </GlobalSubscriptionGuard>
+                
               </BrowserRouter>
             </AppErrorBoundary>
           </TooltipProvider>

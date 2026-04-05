@@ -6,8 +6,6 @@ import { useAuth } from "@/hooks/useAuth";
 import { useCurrency } from "@/hooks/useCurrency";
 import { useGlobalMarkup } from "@/hooks/useGlobalMarkup";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
-import { useSubscription } from "@/hooks/useSubscription";
-import { SubscriptionCheckDialog } from "@/components/subscription/SubscriptionCheckDialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -59,10 +57,8 @@ export default function EngagementOrder() {
   const { user, profile, isLoading: authLoading, isAdmin, wallet, refreshWallet } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const { hasActiveSubscription } = useSubscription();
   const { formatPrice } = useCurrency();
   const { applyMarkup } = useGlobalMarkup();
-  const [showSubscriptionDialog, setShowSubscriptionDialog] = useState(false);
 
   // Form State
   const [platform, setPlatform] = useState('instagram');
@@ -620,11 +616,6 @@ export default function EngagementOrder() {
       return;
     }
 
-    // STEP 1: Check subscription FIRST (before balance)
-    if (!hasActiveSubscription) {
-      setShowSubscriptionDialog(true);
-      return;
-    }
 
     // STEP 2: After subscription is confirmed, check balance
     if (!wallet || wallet.balance <= 0) {
@@ -931,11 +922,6 @@ export default function EngagementOrder() {
         </Card>
       </div>
 
-      {/* Subscription Check Dialog */}
-      <SubscriptionCheckDialog
-        open={showSubscriptionDialog}
-        onOpenChange={setShowSubscriptionDialog}
-      />
     </DashboardLayout>
   );
 }

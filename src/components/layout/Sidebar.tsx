@@ -20,7 +20,7 @@ import {
 } from 'lucide-react';
 import logo from '@/assets/logo.png';
 import { useAuth } from '@/hooks/useAuth';
-import { useSubscription } from '@/hooks/useSubscription';
+
 import { useCurrency, CURRENCIES, type CurrencyCode } from '@/hooks/useCurrency';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -50,7 +50,7 @@ const adminNavItems = [
 export function Sidebar({ onClose }: SidebarProps) {
   const location = useLocation();
   const { isAdmin, signOut, wallet, profile } = useAuth();
-  const { hasActiveSubscription } = useSubscription();
+  
   const { currency, setCurrency, formatPrice, currencyInfo } = useCurrency();
   const [showCurrencyPicker, setShowCurrencyPicker] = useState(false);
 
@@ -91,7 +91,7 @@ export function Sidebar({ onClose }: SidebarProps) {
             <div className="min-w-0 flex-1">
               <p className="text-[11px] font-black truncate flex items-center gap-1.5 text-white/90">
                 {profile.full_name || 'User'}
-                {hasActiveSubscription && <Crown className="h-3 w-3 text-amber-500 shrink-0" />}
+                
               </p>
               <p className="text-[10px] font-bold truncate text-white/30">{profile.email}</p>
             </div>
