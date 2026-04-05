@@ -36,7 +36,7 @@ import AdminUsers from "./pages/admin/AdminUsers";
 import AdminOrders from "./pages/admin/AdminOrders";
 import AdminBundles from "./pages/admin/AdminBundles";
 import AdminCronMonitor from "./pages/admin/AdminCronMonitor";
-import AdminSubscriptions from "./pages/admin/AdminSubscriptions";
+
 import AdminChat from "./pages/admin/AdminChat";
 import AdminDeposits from "./pages/admin/AdminDeposits";
 import AdminProviderAccounts from "./pages/admin/AdminProviderAccounts";
