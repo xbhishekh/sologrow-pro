@@ -225,7 +225,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         .select('*')
         .eq('user_id', user.id)
         .single();
-      if (data) setProfile(data as Profile);
+      if (data) setProfile(data as unknown as Profile);
     }
   };
 
