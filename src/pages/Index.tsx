@@ -173,7 +173,7 @@ const Index = () => {
         <section className="py-20">
           <div className="max-w-[1100px] mx-auto px-6">
             <div className="relative rounded-3xl overflow-hidden text-center" style={{ minHeight: '400px' }}>
-              <img src={heroVisual} alt="" className="absolute inset-0 w-full h-full object-cover" />
+              <img src={hero3d} alt="" className="absolute inset-0 w-full h-full object-cover" />
               <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, rgba(88,28,135,.92) 0%, rgba(157,23,77,.85) 50%, rgba(234,88,12,.75) 100%)' }} />
               <div className="relative z-10 py-16 px-6">
                 <img src={logo} alt="" className="w-14 h-14 rounded-xl object-cover mx-auto mb-6 shadow-xl" />
