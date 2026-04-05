@@ -32,7 +32,6 @@ export function useMaintenanceMode() {
           event: 'UPDATE',
           schema: 'public',
           table: 'platform_settings',
-          filter: 'id=eq.global',
         },
         (payload) => {
           const newMode = (payload.new as any)?.maintenance_mode ?? false;
