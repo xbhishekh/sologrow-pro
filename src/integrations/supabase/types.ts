@@ -473,6 +473,7 @@ export type Database = {
           order_id: string | null
           peak_multiplier: number | null
           provider_account_id: string | null
+          provider_account_name: string | null
           provider_charge: number | null
           provider_order_id: string | null
           provider_remains: number | null
@@ -498,6 +499,7 @@ export type Database = {
           order_id?: string | null
           peak_multiplier?: number | null
           provider_account_id?: string | null
+          provider_account_name?: string | null
           provider_charge?: number | null
           provider_order_id?: string | null
           provider_remains?: number | null
@@ -523,6 +525,7 @@ export type Database = {
           order_id?: string | null
           peak_multiplier?: number | null
           provider_account_id?: string | null
+          provider_account_name?: string | null
           provider_charge?: number | null
           provider_order_id?: string | null
           provider_remains?: number | null
