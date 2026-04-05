@@ -588,43 +588,58 @@ export type Database = {
       profiles: {
         Row: {
           api_key: string | null
+          avatar_url: string | null
           created_at: string | null
           currency: string | null
           email: string
           full_name: string | null
           id: string
+          is_organic_mode_default: boolean | null
           organic_peak_hours_enabled: boolean | null
+          organic_ratios: Json | null
           organic_variance_percent: number | null
           telegram_chat_id: string | null
+          telegram_id: string | null
           telegram_notifications_enabled: boolean | null
+          telegram_username: string | null
           updated_at: string | null
           user_id: string
         }
         Insert: {
           api_key?: string | null
+          avatar_url?: string | null
           created_at?: string | null
           currency?: string | null
           email: string
           full_name?: string | null
           id?: string
+          is_organic_mode_default?: boolean | null
           organic_peak_hours_enabled?: boolean | null
+          organic_ratios?: Json | null
           organic_variance_percent?: number | null
           telegram_chat_id?: string | null
+          telegram_id?: string | null
           telegram_notifications_enabled?: boolean | null
+          telegram_username?: string | null
           updated_at?: string | null
           user_id: string
         }
         Update: {
           api_key?: string | null
+          avatar_url?: string | null
           created_at?: string | null
           currency?: string | null
           email?: string
           full_name?: string | null
           id?: string
+          is_organic_mode_default?: boolean | null
           organic_peak_hours_enabled?: boolean | null
+          organic_ratios?: Json | null
           organic_variance_percent?: number | null
           telegram_chat_id?: string | null
+          telegram_id?: string | null
           telegram_notifications_enabled?: boolean | null
+          telegram_username?: string | null
           updated_at?: string | null
           user_id?: string
         }
@@ -1088,6 +1103,8 @@ export type Database = {
       }
     }
     Functions: {
+      get_admin_dashboard_stats: { Args: never; Returns: Json }
+      get_admin_users_summary: { Args: never; Returns: Json }
       get_user_role: {
         Args: { _user_id: string }
         Returns: Database["public"]["Enums"]["app_role"]
