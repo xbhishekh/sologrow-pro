@@ -115,18 +115,17 @@ const App = () => {
                     <Route path="/engagement-orders" element={<EngagementOrders />} />
                     <Route path="/engagement-orders/:orderNumber" element={<EngagementOrderDetail />} />
 
-                    {/* Admin */}
-                    <Route path="/admin" element={<Admin />} />
-                    <Route path="/admin/services" element={<AdminServices />} />
-                    <Route path="/admin/users" element={<AdminUsers />} />
-                    <Route path="/admin/orders" element={<AdminOrders />} />
-                    <Route path="/admin/bundles" element={<AdminBundles />} />
-                    <Route path="/admin/cron-monitor" element={<AdminCronMonitor />} />
-                    
-                    <Route path="/admin/chat" element={<AdminChat />} />
-                    <Route path="/admin/deposits" element={<AdminDeposits />} />
-                    <Route path="/admin/provider-accounts" element={<AdminProviderAccounts />} />
-                    <Route path="/admin/service-provider-mapping" element={<AdminServiceProviderMapping />} />
+                    {/* Admin — server-verified guard */}
+                    <Route path="/admin" element={<AdminGuard><Admin /></AdminGuard>} />
+                    <Route path="/admin/services" element={<AdminGuard><AdminServices /></AdminGuard>} />
+                    <Route path="/admin/users" element={<AdminGuard><AdminUsers /></AdminGuard>} />
+                    <Route path="/admin/orders" element={<AdminGuard><AdminOrders /></AdminGuard>} />
+                    <Route path="/admin/bundles" element={<AdminGuard><AdminBundles /></AdminGuard>} />
+                    <Route path="/admin/cron-monitor" element={<AdminGuard><AdminCronMonitor /></AdminGuard>} />
+                    <Route path="/admin/chat" element={<AdminGuard><AdminChat /></AdminGuard>} />
+                    <Route path="/admin/deposits" element={<AdminGuard><AdminDeposits /></AdminGuard>} />
+                    <Route path="/admin/provider-accounts" element={<AdminGuard><AdminProviderAccounts /></AdminGuard>} />
+                    <Route path="/admin/service-provider-mapping" element={<AdminGuard><AdminServiceProviderMapping /></AdminGuard>} />
 
                     {/* Legal */}
                     <Route path="/terms" element={<TermsOfService />} />
