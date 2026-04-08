@@ -179,7 +179,8 @@ serve(async (req) => {
 
     // Deduct payment
     const newBalance = wallet.balance - total_price
-    await supabase.from('wallets').update({ balance: newBalance, updated_at: new Date().toISOString() }).eq('id', wallet.id)
+    const newSpent = (wallet.total_spent || 0) + total_price
+    await supabase.from('wallets').update({ balance: newBalance, total_spent: newSpent, updated_at: new Date().toISOString() }).eq('id', wallet.id)
 
     // Check if bundle has AI Organic Mode enabled (default ON)
     let aiOrganicEnabled = true
