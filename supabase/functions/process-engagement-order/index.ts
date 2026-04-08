@@ -196,6 +196,17 @@ serve(async (req) => {
 
     if (orderError || !order) return new Response(JSON.stringify({ error: `Failed to create order: ${orderError?.message || 'Unknown error'}` }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
 
+    // Record transaction for revenue tracking
+    await supabase.from('transactions').insert({
+      user_id,
+      type: 'order_payment',
+      amount: total_price,
+      balance_after: newBalance,
+      order_id: order.id,
+      status: 'completed',
+      description: `Engagement Order #${order.order_number}`,
+    })
+
     const createdItemIds = []
     for (const eng of engagements) {
       const { data: item } = await supabase.from('engagement_order_items').insert({
