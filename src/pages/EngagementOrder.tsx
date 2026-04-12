@@ -224,7 +224,7 @@ export default function EngagementOrder() {
       retweets: ['retweet'],
     };
 
-    const prices: Record<string, { pricePerK: number; serviceId: string; minQuantity: number }> = {};
+    const prices: Record<string, { pricePerK: number; serviceId: string | null; minQuantity: number }> = {};
     bundle.items.forEach(item => {
       // 1) Try the linked service first
       if (item.service && item.service.price > 0) {
@@ -300,7 +300,7 @@ export default function EngagementOrder() {
         const ratioQuantity = Math.round(debouncedBaseQuantity * (ratioPercent / 100));
 
         const serviceData = servicePrices[type];
-        const serviceMin = serviceData?.minQuantity ?? 0;
+        const serviceMin = serviceData?.minQuantity ?? prev[type]?.minQuantity ?? 0;
 
         // Clamp quantity to service minimum
         const quantity = serviceMin > 0 ? Math.max(serviceMin, ratioQuantity) : ratioQuantity;
@@ -309,9 +309,11 @@ export default function EngagementOrder() {
           type,
           enabled: prev[type] ? prev[type].enabled : isEnabledByDefault,
           quantity: (isAutoRatios || !prev[type]) ? quantity : prev[type].quantity,
-          price: serviceData ? (quantity / 1000) * serviceData.pricePerK : 0,
-          serviceId: serviceData?.serviceId || null,
-          minQuantity: serviceData?.minQuantity,
+          price: serviceData
+            ? (quantity / 1000) * serviceData.pricePerK
+            : prev[type]?.price ?? 0,
+          serviceId: serviceData?.serviceId ?? prev[type]?.serviceId ?? null,
+          minQuantity: serviceData?.minQuantity ?? prev[type]?.minQuantity,
           // Per-type organic settings
           timeLimitHours: prev[type]?.timeLimitHours ?? DEFAULT_ORGANIC_SETTINGS.timeLimitHours,
           variancePercent: prev[type]?.variancePercent ?? DEFAULT_ORGANIC_SETTINGS.variancePercent,

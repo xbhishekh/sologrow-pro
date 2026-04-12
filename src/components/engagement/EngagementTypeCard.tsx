@@ -103,7 +103,7 @@ export function EngagementTypeCard({
   const Icon = iconMap[engagementConfig?.icon as keyof typeof iconMap] || Eye;
 
   // Get provider limits
-  const providerMin = minQuantity || PROVIDER_MINIMUMS[type] || 10;
+  const providerMin = minQuantity ?? PROVIDER_MINIMUMS[type] ?? 10;
   const providerMax = PROVIDER_MAXIMUMS[type] || 1000000;
 
   // Use per-type settings or defaults
