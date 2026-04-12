@@ -912,7 +912,6 @@ serve(async (req) => {
         const isActiveOrderError = lastErr.includes('active order') || lastErr.includes('wait until order') || 
           lastErr.includes('already has an order') || lastErr.includes('in progress')
         
-        // If all providers say "active order on this link", postpone by 10 min instead of retrying immediately
         const postponeMs = isActiveOrderError ? 10 * 60 * 1000 : 2 * 60 * 1000
         const newScheduledAt = new Date(Date.now() + postponeMs).toISOString()
         
@@ -924,8 +923,16 @@ serve(async (req) => {
           retry_count: retryCount, last_status_check: new Date().toISOString(),
         }).eq('id', run.id)
         skipped++
-        if (isActiveOrderError) {
-          console.log(`⏳ Run #${run.run_number} postponed 10min (active order on link)`)
+
+        // BATCH POSTPONE: If active order error, mark link and batch-postpone ALL pending runs for this link
+        if (isActiveOrderError && sameLink) {
+          activeOrderLinks.add(sameLink)
+          const { count: batchCount } = await supabase.from('organic_run_schedule')
+            .update({ scheduled_at: newScheduledAt, error_message: `[Batch postponed] Active order on link` })
+            .eq('status', 'pending')
+            .lte('scheduled_at', new Date().toISOString())
+            .filter('engagement_order_item_id', 'not.is', null)
+          console.log(`⏳ Link batch-postponed 10min: ${batchCount || 0} runs (active order)`)
         }
         results.push({ run_id: run.id, type: item.engagement_type, run_number: run.run_number, 
           success: false, error: lastError, will_retry: true, retry_attempt: retryCount, postponed_min: postponeMs / 60000 })
