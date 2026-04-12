@@ -189,32 +189,45 @@ Deno.serve(async (req) => {
           console.error(`Status check failed for ${run.provider_order_id}:`, result.error)
           
           if (result.error.includes('not found') || result.error.includes('cancelled') || result.error.includes('Incorrect order')) {
-            // Check if we can retry this run - AGGRESSIVE retries (up to 15)
-            const currentRetryCount = run.retry_count || 0
-            if (currentRetryCount < 15) {
-              // Mark for retry - don't mark as failed, just reset to failed so execute-all-runs will retry
-              console.log(`🔄 Marking run for retry (attempt ${currentRetryCount + 1}/15)`)
+            const orderStatus = run.engagement_order_item?.engagement_order?.status
+            const itemStatus = run.engagement_order_item?.status
+
+            if (orderStatus === 'cancelled' || itemStatus === 'cancelled') {
               await supabase.from('organic_run_schedule').update({
-                status: 'failed',
-                error_message: `Auto-retry: ${result.error}`,
+                status: 'cancelled',
+                error_message: 'Order cancelled by user',
                 completed_at: new Date().toISOString(),
-                provider_status: 'error',
+                provider_status: 'cancelled',
                 last_status_check: new Date().toISOString(),
               }).eq('id', run.id)
-              failed++
             } else {
-              // Max retries reached - mark as permanently failed
-              console.log(`❌ Max retries reached for run, marking as permanently failed`)
-              await supabase.from('organic_run_schedule').update({
-                status: 'failed',
-                error_message: `Max retries (15) reached: ${result.error}`,
-                completed_at: new Date().toISOString(),
-                provider_status: 'error',
-                last_status_check: new Date().toISOString(),
-                retry_count: 99 // Set high to prevent further retries
-              }).eq('id', run.id)
-              failed++
-              await updateEngagementOrderStatus(supabase, run.engagement_order_item?.engagement_order_id, run.engagement_order_item?.id)
+              // Check if we can retry this run - AGGRESSIVE retries (up to 15)
+              const currentRetryCount = run.retry_count || 0
+              if (currentRetryCount < 15) {
+                // Mark for retry - don't mark as failed, just reset to failed so execute-all-runs will retry
+                console.log(`🔄 Marking run for retry (attempt ${currentRetryCount + 1}/15)`)
+                await supabase.from('organic_run_schedule').update({
+                  status: 'failed',
+                  error_message: `Auto-retry: ${result.error}`,
+                  completed_at: new Date().toISOString(),
+                  provider_status: 'error',
+                  last_status_check: new Date().toISOString(),
+                }).eq('id', run.id)
+                failed++
+              } else {
+                // Max retries reached - mark as permanently failed
+                console.log(`❌ Max retries reached for run, marking as permanently failed`)
+                await supabase.from('organic_run_schedule').update({
+                  status: 'failed',
+                  error_message: `Max retries (15) reached: ${result.error}`,
+                  completed_at: new Date().toISOString(),
+                  provider_status: 'error',
+                  last_status_check: new Date().toISOString(),
+                  retry_count: 99 // Set high to prevent further retries
+                }).eq('id', run.id)
+                failed++
+                await updateEngagementOrderStatus(supabase, run.engagement_order_item?.engagement_order_id, run.engagement_order_item?.id)
+              }
             }
           } else {
             // Update last check time even for errors
@@ -681,7 +694,7 @@ async function updateEngagementOrderStatus(supabase: any, engagementOrderId: str
     orderStatus = 'failed'
   }
 
-  await supabase.from('engagement_orders').update({ status: orderStatus }).eq('id', engagementOrderId)
+  await supabase.from('engagement_orders').update({ status: orderStatus }).eq('id', engagementOrderId).neq('status', 'cancelled')
 }
 
 // Helper function to update legacy order status
