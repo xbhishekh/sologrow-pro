@@ -616,26 +616,45 @@ Deno.serve(async (req) => {
 async function updateEngagementOrderStatus(supabase: any, engagementOrderId: string, itemId: string) {
   if (!engagementOrderId) return
 
+  const { data: parentOrder } = await supabase
+    .from('engagement_orders')
+    .select('status')
+    .eq('id', engagementOrderId)
+    .maybeSingle()
+
+  if (parentOrder?.status === 'cancelled') {
+    console.log(`🚫 Skipping parent engagement order status update for cancelled order ${engagementOrderId}`)
+    return
+  }
+
   // Update item status
   if (itemId) {
-    const { data: itemRuns } = await supabase
-      .from('organic_run_schedule')
+    const { data: currentItem } = await supabase
+      .from('engagement_order_items')
       .select('status')
-      .eq('engagement_order_item_id', itemId)
+      .eq('id', itemId)
+      .maybeSingle()
 
-    if (itemRuns && itemRuns.length > 0) {
-      const completedCount = itemRuns.filter((r: any) => r.status === 'completed').length
-      const failedCount = itemRuns.filter((r: any) => r.status === 'failed').length
-      const totalRuns = itemRuns.length
+    if (currentItem?.status !== 'cancelled') {
+      const { data: itemRuns } = await supabase
+        .from('organic_run_schedule')
+        .select('status')
+        .eq('engagement_order_item_id', itemId)
 
-      let itemStatus = 'processing'
-      if (completedCount === totalRuns) {
-        itemStatus = 'completed'
-      } else if (completedCount + failedCount === totalRuns) {
-        itemStatus = failedCount > 0 ? 'partial' : 'completed'
+      if (itemRuns && itemRuns.length > 0) {
+        const completedCount = itemRuns.filter((r: any) => r.status === 'completed').length
+        const failedCount = itemRuns.filter((r: any) => r.status === 'failed').length
+        const totalRuns = itemRuns.length
+
+        let itemStatus = 'processing'
+        if (completedCount === totalRuns) {
+          itemStatus = 'completed'
+        } else if (completedCount + failedCount === totalRuns) {
+          itemStatus = failedCount > 0 ? 'partial' : 'completed'
+        }
+
+        await supabase.from('engagement_order_items').update({ status: itemStatus }).eq('id', itemId)
       }
-
-      await supabase.from('engagement_order_items').update({ status: itemStatus }).eq('id', itemId)
     }
   }
 
@@ -649,7 +668,6 @@ async function updateEngagementOrderStatus(supabase: any, engagementOrderId: str
 
   const completedItems = allItems.filter((i: any) => i.status === 'completed').length
   const failedItems = allItems.filter((i: any) => i.status === 'failed').length
-  const processingItems = allItems.filter((i: any) => i.status === 'processing').length
   const totalItems = allItems.length
 
   console.log(`Engagement Order ${engagementOrderId} progress: ${completedItems}/${totalItems} items completed`)
