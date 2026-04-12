@@ -1293,8 +1293,12 @@ serve(async (req) => {
           status: 'processing',
         }).eq('id', item.engagement_order_id).not('status', 'in', '("cancelled","paused")')
 
-        // Add to local tracking set before continuing to prevent duplicates in same loop
-        startedInThisExecution.add(localExecutionKey)
+        // Track which provider was used for this link+type to avoid duplicate providers in same execution
+        if (!executionProviderMap.has(localExecutionKey)) {
+          executionProviderMap.set(localExecutionKey, new Set())
+        }
+        executionProviderMap.get(localExecutionKey)!.add(successAccount.id)
+        console.log(`[${executionId}] 📌 Provider ${successAccount.name} now tracked for ${localExecutionKey} — next run will use different provider`)
 
         processed++
         results.push({ 
