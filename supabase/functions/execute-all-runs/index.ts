@@ -494,14 +494,15 @@ serve(async (req) => {
 
     console.log(`Fetched ${pendingEngagementRuns?.length || 0} pending runs, ${activeEngagementRuns.length} active (excluded ${(pendingEngagementRuns?.length || 0) - activeEngagementRuns.length} paused/cancelled)`)
 
-    // SEQUENTIAL EXECUTION PER ITEM:
-    // Only process ONE run per item at a time to ensure strict priority-based delivery
-    // and avoid "active order" conflicts on the same link across different providers.
+    // MULTI-PROVIDER CONCURRENT EXECUTION PER ITEM:
+    // Allow up to 3 runs per item simultaneously — each MUST use a DIFFERENT provider.
+    // Run 1 → Provider 1, Run 2 → Provider 2 (if P1 busy/not done), Run 3 → Provider 3
     const itemRunCount = new Map<string, number>()
-    const MAX_CONCURRENT_PER_ITEM = 1 // Reverted to 1 for strict sequence
+    const MAX_CONCURRENT_PER_ITEM = 3 // Allow 3 concurrent runs per item (one per provider)
     
-    // Track what we start in THIS loop to prevent duplicates
-    const startedInThisExecution = new Set<string>()
+    // Track which providers are already assigned to runs for each link+type in THIS execution
+    // Key: "link|type" → Set of provider_account_ids used
+    const executionProviderMap = new Map<string, Set<string>>()
     
     const deduplicatedRuns = activeEngagementRuns.filter(run => {
       const itemId = run.engagement_order_item_id
