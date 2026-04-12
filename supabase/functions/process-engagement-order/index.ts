@@ -389,6 +389,17 @@ serve(async (req) => {
               if (e.quantity_to_send > 0) validatedEntries.push(e)
             }
           }
+
+          // FINAL FIX: If the last validated entry is below providerMin, merge it into the previous one
+          if (validatedEntries.length >= 2) {
+            const lastEntry = validatedEntries[validatedEntries.length - 1]
+            if (lastEntry.quantity_to_send < providerMin) {
+              const prevEntry = validatedEntries[validatedEntries.length - 2]
+              prevEntry.quantity_to_send += lastEntry.quantity_to_send
+              prevEntry.base_quantity = prevEntry.quantity_to_send
+              validatedEntries.pop()
+            }
+          }
           
           // Final safety net: If no runs created but quantity exists, create one massive run
           if (validatedEntries.length === 0 && totalTargetQty > 0) {
