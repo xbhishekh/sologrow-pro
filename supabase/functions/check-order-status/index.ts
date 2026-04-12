@@ -114,6 +114,19 @@ Deno.serve(async (req) => {
     // (Not grouped by service provider_id - that was the bug!)
     for (const run of engagementRuns || []) {
       try {
+        const orderStatus = run.engagement_order_item?.engagement_order?.status
+        const itemStatus = run.engagement_order_item?.status
+
+        if (orderStatus === 'cancelled' || itemStatus === 'cancelled') {
+          console.log(`🚫 Skipping status sync for cancelled engagement run #${run.run_number}`)
+          await supabase.from('organic_run_schedule').update({
+            status: 'cancelled',
+            error_message: run.error_message || 'Order cancelled by user',
+            completed_at: run.completed_at || new Date().toISOString(),
+            last_status_check: new Date().toISOString(),
+          }).eq('id', run.id)
+          continue
+        }
         // Use the provider_account that was used to place the order
         // Fallback to default provider if no account recorded
         let apiKey: string
