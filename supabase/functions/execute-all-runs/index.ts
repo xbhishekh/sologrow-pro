@@ -728,13 +728,10 @@ serve(async (req) => {
       const localExecutionKey = `${sameLinkNormalized}|${currentTypeNormalized}`
       
       // ============================================
-      // EXECUTION-LEVEL GUARD: Only start ONE run per link+type per execution
+      // EXECUTION-LEVEL GUARD: Track providers used per link+type in this execution
+      // Allow multiple runs for same link+type IF they use DIFFERENT providers
       // ============================================
-      if (startedInThisExecution.has(localExecutionKey)) {
-        console.log(`[${executionId}] ⏩ Skipping run #${run.run_number} - already started a run for this link/type in this execution`)
-        skipped++
-        continue
-      }
+      const usedProvidersForKey = executionProviderMap.get(localExecutionKey) || new Set<string>()
       
       // 1. Check STARTED runs for same LINK + same SERVICE ID (same engagement type)
       // Different engagement types (views vs likes) are independent — they use different services
