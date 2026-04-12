@@ -890,15 +890,27 @@ serve(async (req) => {
         }).eq('id', run.id)
       } else {
         const retryCount = (run.retry_count || 0) + 1
+        const lastErr = (lastError || '').toLowerCase()
+        const isActiveOrderError = lastErr.includes('active order') || lastErr.includes('wait until order') || 
+          lastErr.includes('already has an order') || lastErr.includes('in progress')
+        
+        // If all providers say "active order on this link", postpone by 10 min instead of retrying immediately
+        const postponeMs = isActiveOrderError ? 10 * 60 * 1000 : 2 * 60 * 1000
+        const newScheduledAt = new Date(Date.now() + postponeMs).toISOString()
+        
         await supabase.from('organic_run_schedule').update({
           status: 'pending', started_at: null,
+          scheduled_at: newScheduledAt,
           error_message: `[Auto-retry #${retryCount}] All ${accountsToTry.length} accounts busy: ${lastError}`,
           provider_response: providerResult, provider_account_id: null,
           retry_count: retryCount, last_status_check: new Date().toISOString(),
         }).eq('id', run.id)
         skipped++
+        if (isActiveOrderError) {
+          console.log(`⏳ Run #${run.run_number} postponed 10min (active order on link)`)
+        }
         results.push({ run_id: run.id, type: item.engagement_type, run_number: run.run_number, 
-          success: false, error: lastError, will_retry: true, retry_attempt: retryCount })
+          success: false, error: lastError, will_retry: true, retry_attempt: retryCount, postponed_min: postponeMs / 60000 })
       }
 
       // Reduced delay between runs (was 500ms → 100ms)
