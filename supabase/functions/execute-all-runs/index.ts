@@ -624,9 +624,18 @@ serve(async (req) => {
       
       if (accountsToTry.length === 0) {
         if (mappingCache.hasAnyForService(item.service.id)) {
+          // POSTPONE: All providers busy — push scheduled_at forward so we don't waste cycles
+          const postponeMs = 10 * 60 * 1000
+          const newScheduledAt = new Date(Date.now() + postponeMs).toISOString()
+          await supabase.from('organic_run_schedule').update({
+            scheduled_at: newScheduledAt,
+            error_message: `[Postponed] All providers busy for this link`,
+            last_status_check: new Date().toISOString(),
+          }).eq('id', run.id)
           skipped++
+          console.log(`⏳ Run #${run.run_number} postponed 10min (all providers pre-filtered as busy)`)
           results.push({ run_id: run.id, run_number: run.run_number, type: item.engagement_type,
-            success: false, skipped: true, reason: `All providers busy` })
+            success: false, skipped: true, reason: `All providers busy - postponed 10min` })
         } else {
           await supabase.from('organic_run_schedule').update({
             status: 'failed', error_message: 'No provider accounts configured',
