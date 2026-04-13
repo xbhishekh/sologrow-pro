@@ -256,6 +256,7 @@ const getNestedEngagementOrderLink = (value: any) => {
 async function batchPostponeEngagementRunsForLink(
   supabase: SupabaseClient,
   normalizedLink: string,
+  engagementType: string,
   scheduledAt: string,
   reason: string,
 ) {
@@ -263,7 +264,7 @@ async function batchPostponeEngagementRunsForLink(
 
   const { data: dueRuns, error: dueRunsError } = await supabase
     .from('organic_run_schedule')
-    .select('id, engagement_order_item:engagement_order_items!inner(engagement_order:engagement_orders!inner(link))')
+    .select('id, engagement_order_item:engagement_order_items!inner(engagement_type, engagement_order:engagement_orders!inner(link))')
     .eq('status', 'pending')
     .not('engagement_order_item_id', 'is', null)
     .lte('scheduled_at', new Date().toISOString())
@@ -274,8 +275,13 @@ async function batchPostponeEngagementRunsForLink(
     return 0
   }
 
+  // Only postpone runs with matching link AND engagement type
   const matchingIds = dueRuns
-    .filter((dueRun: any) => normalizeLink(dueRun.engagement_order_item?.engagement_order?.link) === normalizedLink)
+    .filter((dueRun: any) => {
+      const runLink = normalizeLink(dueRun.engagement_order_item?.engagement_order?.link)
+      const runType = (dueRun.engagement_order_item?.engagement_type || '').toLowerCase()
+      return runLink === normalizedLink && runType === engagementType.toLowerCase()
+    })
     .map((dueRun: any) => dueRun.id)
 
   if (matchingIds.length === 0) return 0
@@ -514,8 +520,8 @@ serve(async (req) => {
     const itemRunCount = new Map<string, number>()
     const MAX_CONCURRENT_PER_ITEM = 3
     const executionProviderMap = new Map<string, Set<string>>()
-    // Track links where ALL providers returned "active order" — batch-postpone all runs for that link
-    const activeOrderLinks = new Set<string>()
+    // Track link+type combos where ALL providers returned "active order" — only skip same type
+    const activeOrderLinkTypes = new Set<string>()
     
     const deduplicatedRuns = activeEngagementRuns.filter(run => {
       const itemId = run.engagement_order_item_id
@@ -563,9 +569,11 @@ serve(async (req) => {
         break
       }
 
-      // FAST SKIP: If we already know this link has "active order" on all providers, skip immediately
+      // FAST SKIP: If we already know this link+type has "active order" on all providers, skip immediately
       const runLink = normalizeLink(run.engagement_order_item?.engagement_order?.link)
-      if (runLink && activeOrderLinks.has(runLink)) {
+      const runType = (run.engagement_order_item?.engagement_type || '').toLowerCase()
+      const linkTypeKey = `${runLink}|${runType}`
+      if (runLink && activeOrderLinkTypes.has(linkTypeKey)) {
         skipped++
         continue
       }
@@ -1059,16 +1067,18 @@ serve(async (req) => {
         }).eq('id', run.id)
         skipped++
 
-        // BATCH POSTPONE: If active order error, mark link and batch-postpone ALL pending runs for this link
+        // BATCH POSTPONE: If active order error, mark link+type and batch-postpone same-type runs for this link
         if (isActiveOrderError && sameLink) {
-          activeOrderLinks.add(sameLink)
+          const linkTypeKey = `${sameLink}|${currentTypeNormalized}`
+          activeOrderLinkTypes.add(linkTypeKey)
           const batchCount = await batchPostponeEngagementRunsForLink(
             supabase,
             sameLink,
+            currentTypeNormalized,
             newScheduledAt,
-            '[Batch postponed] Active order on link',
+            `[Batch postponed] Active order on link for ${currentTypeNormalized}`,
           )
-          console.log(`⏳ Link batch-postponed ${postponeMs / 60000}min: ${batchCount} matching runs (active order)`)
+          console.log(`⏳ Link+type batch-postponed ${postponeMs / 60000}min: ${batchCount} matching ${currentTypeNormalized} runs (active order)`)
         }
         results.push({ run_id: run.id, type: item.engagement_type, run_number: run.run_number, 
           success: false, error: lastError, will_retry: true, retry_attempt: retryCount, postponed_min: postponeMs / 60000 })
