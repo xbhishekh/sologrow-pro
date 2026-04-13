@@ -9,6 +9,8 @@ const corsHeaders = {
 const MAX_RETRIES = 3
 const RETRY_DELAY_MS = 2000
 const MAX_RUN_RETRIES = 9999
+const ACTIVE_ORDER_RETRY_MS = 60 * 1000
+const TEMPORARY_RETRY_MS = 60 * 1000
 
 const TEMPORARY_ERRORS = [
   'balance', 'not have enough', 'processing another transaction',
@@ -229,6 +231,58 @@ const detectPlatformFromService = (serviceName: string): string | null => {
 
 const isValidUUID = (s: string) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(s)
 
+const normalizeLink = (value?: string | null) => (value || '').toLowerCase().trim().replace(/\/$/, '')
+
+const isTerminalProviderStatus = (status?: string | null) => {
+  const normalized = (status || '').toLowerCase().trim()
+  return ['completed', 'complete', 'partial', 'refunded', 'canceled', 'cancelled', 'error', 'failed', 'success', 'refund', 'canscelled'].includes(normalized)
+}
+
+async function batchPostponeEngagementRunsForLink(
+  supabase: SupabaseClient,
+  normalizedLink: string,
+  scheduledAt: string,
+  reason: string,
+) {
+  if (!normalizedLink) return 0
+
+  const { data: dueRuns, error: dueRunsError } = await supabase
+    .from('organic_run_schedule')
+    .select('id, engagement_order_item:engagement_order_items!inner(engagement_order:engagement_orders!inner(link))')
+    .eq('status', 'pending')
+    .not('engagement_order_item_id', 'is', null)
+    .lte('scheduled_at', new Date().toISOString())
+    .limit(1000)
+
+  if (dueRunsError || !dueRuns?.length) {
+    if (dueRunsError) console.error('Failed to load due runs for batch postpone:', dueRunsError)
+    return 0
+  }
+
+  const matchingIds = dueRuns
+    .filter((dueRun: any) => normalizeLink(dueRun.engagement_order_item?.engagement_order?.link) === normalizedLink)
+    .map((dueRun: any) => dueRun.id)
+
+  if (matchingIds.length === 0) return 0
+
+  const { data: updatedRuns, error: updateError } = await supabase
+    .from('organic_run_schedule')
+    .update({
+      scheduled_at: scheduledAt,
+      error_message: reason,
+      last_status_check: new Date().toISOString(),
+    })
+    .in('id', matchingIds)
+    .select('id')
+
+  if (updateError) {
+    console.error('Failed to batch postpone matching runs:', updateError)
+    return 0
+  }
+
+  return updatedRuns?.length || 0
+}
+
 serve(async (req) => {
   const startTime = Date.now()
   if (req.method === 'OPTIONS') {
@@ -422,7 +476,7 @@ serve(async (req) => {
         const isBusyError = err.includes('active order') || err.includes('already has an order') || 
           err.includes('wait until') || err.includes('processing previous') || err.includes('in progress')
         if (isBusyError) {
-          const rbrLink = (rbr.engagement_order_item?.engagement_order?.link || '').toLowerCase().replace(/\/$/, '')
+          const rbrLink = normalizeLink(rbr.engagement_order_item?.engagement_order?.link)
           if (!recentlyBusyByLink.has(rbrLink)) recentlyBusyByLink.set(rbrLink, new Set())
           recentlyBusyByLink.get(rbrLink)!.add(rbr.provider_account_id)
         }
@@ -438,7 +492,7 @@ serve(async (req) => {
       }
 
       // FAST SKIP: If we already know this link has "active order" on all providers, skip immediately
-      const runLink = (run.engagement_order_item?.engagement_order?.link || '').toLowerCase().replace(/\/$/, '')
+      const runLink = normalizeLink(run.engagement_order_item?.engagement_order?.link)
       if (runLink && activeOrderLinks.has(runLink)) {
         skipped++
         continue
@@ -536,9 +590,9 @@ serve(async (req) => {
         continue
       }
 
-      const sameLink = (orderLink).toLowerCase().replace(/\/$/, '')
+      const sameLink = normalizeLink(orderLink)
       const currentServiceId = item.service?.id
-      const sameLinkNormalized = sameLink.toLowerCase().trim().replace(/\/$/, '')
+      const sameLinkNormalized = sameLink
       const currentTypeNormalized = currentType.toLowerCase().trim()
       const localExecutionKey = `${sameLinkNormalized}|${currentTypeNormalized}`
       
@@ -561,7 +615,7 @@ serve(async (req) => {
       
       // From active (started) runs for same link+service
       const startedRunsForLink = (activeRuns || []).filter((r: any) => {
-        const runLink = (r.engagement_order_item?.engagement_order?.link || '').toLowerCase().replace(/\/$/, '')
+        const runLink = normalizeLink(r.engagement_order_item?.engagement_order?.link)
         const runServiceId = r.engagement_order_item?.service_id || ''
         return runLink === sameLink && runServiceId === currentServiceId
       })
@@ -634,7 +688,7 @@ serve(async (req) => {
       if (accountsToTry.length === 0) {
         if (mappingCache.hasAnyForService(item.service.id)) {
           // POSTPONE: All providers busy — push scheduled_at forward so we don't waste cycles
-          const postponeMs = 10 * 60 * 1000
+          const postponeMs = ACTIVE_ORDER_RETRY_MS
           const newScheduledAt = new Date(Date.now() + postponeMs).toISOString()
           await supabase.from('organic_run_schedule').update({
             scheduled_at: newScheduledAt,
@@ -642,9 +696,9 @@ serve(async (req) => {
             last_status_check: new Date().toISOString(),
           }).eq('id', run.id)
           skipped++
-          console.log(`⏳ Run #${run.run_number} postponed 10min (all providers pre-filtered as busy)`)
+          console.log(`⏳ Run #${run.run_number} postponed ${postponeMs / 60000}min (all providers pre-filtered as busy)`)
           results.push({ run_id: run.id, run_number: run.run_number, type: item.engagement_type,
-            success: false, skipped: true, reason: `All providers busy - postponed 10min` })
+            success: false, skipped: true, reason: `All providers busy - postponed ${postponeMs / 60000}min` })
         } else {
           await supabase.from('organic_run_schedule').update({
             status: 'failed', error_message: 'No provider accounts configured',
@@ -869,6 +923,8 @@ serve(async (req) => {
         }
         
         // Update run + item + order in parallel
+        const providerIsTerminal = isTerminalProviderStatus(verifiedStatus)
+
         const updatePromises = [
           supabase.from('organic_run_schedule').update({
             provider_order_id: providerOrderId, provider_response: providerResult,
@@ -876,6 +932,9 @@ serve(async (req) => {
             provider_account_name: successAccount.name, provider_status: verifiedStatus,
             provider_start_count: verifiedStartCount, provider_remains: verifiedRemains,
             provider_charge: verifiedCharge,
+            ...(providerIsTerminal
+              ? { status: 'completed', completed_at: new Date().toISOString() }
+              : {}),
             last_status_check: verifiedLastStatusCheck || new Date().toISOString(),
           }).eq('id', run.id).eq('status', 'started'),
           supabase.from('engagement_order_items').update({ status: 'processing' })
@@ -900,19 +959,20 @@ serve(async (req) => {
         results.push({ 
           run_id: run.id, type: item.engagement_type, run_number: run.run_number,
           success: true, provider_order_id: providerOrderId,
-          account_used: successAccount.name, accounts_tried: accountsToTry.length
+          account_used: successAccount.name, accounts_tried: accountsToTry.length,
+          status: providerIsTerminal ? 'completed' : 'started',
         })
 
-        await supabase.from('organic_run_schedule').update({
-          status: 'completed', completed_at: new Date().toISOString(),
-        }).eq('id', run.id)
+        if (providerIsTerminal) {
+          await updateEngagementOrderStatus(supabase, item.engagement_order_id, item.id)
+        }
       } else {
         const retryCount = (run.retry_count || 0) + 1
         const lastErr = (lastError || '').toLowerCase()
         const isActiveOrderError = lastErr.includes('active order') || lastErr.includes('wait until order') || 
           lastErr.includes('already has an order') || lastErr.includes('in progress')
         
-        const postponeMs = isActiveOrderError ? 10 * 60 * 1000 : 2 * 60 * 1000
+        const postponeMs = isActiveOrderError ? ACTIVE_ORDER_RETRY_MS : TEMPORARY_RETRY_MS
         const newScheduledAt = new Date(Date.now() + postponeMs).toISOString()
         
         await supabase.from('organic_run_schedule').update({
@@ -927,12 +987,13 @@ serve(async (req) => {
         // BATCH POSTPONE: If active order error, mark link and batch-postpone ALL pending runs for this link
         if (isActiveOrderError && sameLink) {
           activeOrderLinks.add(sameLink)
-          const { count: batchCount } = await supabase.from('organic_run_schedule')
-            .update({ scheduled_at: newScheduledAt, error_message: `[Batch postponed] Active order on link` })
-            .eq('status', 'pending')
-            .lte('scheduled_at', new Date().toISOString())
-            .filter('engagement_order_item_id', 'not.is', null)
-          console.log(`⏳ Link batch-postponed 10min: ${batchCount || 0} runs (active order)`)
+          const batchCount = await batchPostponeEngagementRunsForLink(
+            supabase,
+            sameLink,
+            newScheduledAt,
+            '[Batch postponed] Active order on link',
+          )
+          console.log(`⏳ Link batch-postponed ${postponeMs / 60000}min: ${batchCount} matching runs (active order)`)
         }
         results.push({ run_id: run.id, type: item.engagement_type, run_number: run.run_number, 
           success: false, error: lastError, will_retry: true, retry_attempt: retryCount, postponed_min: postponeMs / 60000 })
@@ -1074,7 +1135,7 @@ serve(async (req) => {
         if (isTemporaryError) {
           const cleanError = lastError?.replace('TEMP_ERROR: ', '') || ''
           const isActiveOrder = cleanError.toLowerCase().includes('active order') || cleanError.toLowerCase().includes('wait until order')
-          const postponeMs = isActiveOrder ? 10 * 60 * 1000 : 2 * 60 * 1000
+          const postponeMs = isActiveOrder ? ACTIVE_ORDER_RETRY_MS : TEMPORARY_RETRY_MS
           await supabase.from('organic_run_schedule').update({
             status: 'pending', started_at: null,
             scheduled_at: new Date(Date.now() + postponeMs).toISOString(),
