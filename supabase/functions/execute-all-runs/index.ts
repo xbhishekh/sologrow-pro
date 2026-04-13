@@ -514,8 +514,8 @@ serve(async (req) => {
     const itemRunCount = new Map<string, number>()
     const MAX_CONCURRENT_PER_ITEM = 3
     const executionProviderMap = new Map<string, Set<string>>()
-    // Track links where ALL providers returned "active order" — batch-postpone all runs for that link
-    const activeOrderLinks = new Set<string>()
+    // Track link+type combos where ALL providers returned "active order" — only skip same type
+    const activeOrderLinkTypes = new Set<string>()
     
     const deduplicatedRuns = activeEngagementRuns.filter(run => {
       const itemId = run.engagement_order_item_id
