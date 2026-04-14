@@ -361,6 +361,9 @@ async function updateEngagementOrderStatus(supabase: SupabaseClient, engagementO
   await supabase.from('engagement_orders').update({ status: orderStatus }).eq('id', engagementOrderId).neq('status', 'cancelled')
 }
 
+// Declare EdgeRuntime for waitUntil support
+declare const EdgeRuntime: { waitUntil(promise: Promise<any>): void }
+
 serve(async (req) => {
   const startTime = Date.now()
   if (req.method === 'OPTIONS') {
@@ -405,10 +408,37 @@ serve(async (req) => {
       })
     }
 
-    const now = new Date().toISOString()
     const executionId = crypto.randomUUID().slice(0, 8)
     console.log(`=== EXECUTE ALL ORGANIC RUNS [${executionId}] ===`)
 
+    // Return 202 immediately, process in background to avoid context-canceled
+    const backgroundWork = processAllRuns(supabase, executionId, startTime)
+    
+    try {
+      EdgeRuntime.waitUntil(backgroundWork)
+    } catch {
+      // Fallback: if EdgeRuntime not available, await directly
+      await backgroundWork
+    }
+
+    return new Response(JSON.stringify({
+      success: true, execution_id: executionId,
+      message: 'Processing started in background'
+    }), {
+      status: 202,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    })
+
+  } catch (error: any) {
+    console.error('Execution error:', error)
+    return new Response(JSON.stringify({ error: error.message || 'Internal server error' }), {
+      status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    })
+  }
+})
+
+async function processAllRuns(supabase: any, executionId: string, startTime: number) {
+  try {
     let processed = 0
     let skipped = 0
     let failed = 0
@@ -453,7 +483,7 @@ serve(async (req) => {
         .not('engagement_order_item_id', 'is', null)
         .lte('scheduled_at', nowWithBuffer)
         .order('scheduled_at', { ascending: true })
-        .limit(8000),
+        .limit(200),
       // 4. Failed engagement runs for retry
       supabase
         .from('organic_run_schedule')
@@ -1247,19 +1277,9 @@ serve(async (req) => {
       }
     }
 
-    return new Response(JSON.stringify({
-      success: true, execution_id: executionId,
-      processed, skipped, failed, retried,
-      results: results.slice(0, 50), // Limit response size
-      debug: { execution_time_ms: totalTime }
-    }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-    })
+    console.log(`✅ Background execution [${executionId}] complete: ${processed} processed, ${skipped} skipped, ${failed} failed`)
 
   } catch (error: any) {
-    console.error('Execution error:', error)
-    return new Response(JSON.stringify({ error: error.message || 'Internal server error' }), {
-      status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-    })
+    console.error(`❌ Background execution error:`, error)
   }
-})
+}
