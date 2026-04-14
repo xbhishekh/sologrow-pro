@@ -1115,7 +1115,7 @@ async function processAllRuns(supabase: any, executionId: string, startTime: num
       .from('organic_run_schedule')
       .select(`*, order:orders(*, service:services(*))`)
       .eq('status', 'pending')
-      .lte('scheduled_at', now)
+      .lte('scheduled_at', nowWithBuffer)
       .not('order_id', 'is', null)
       .is('engagement_order_item_id', null)
       .order('scheduled_at', { ascending: true })
