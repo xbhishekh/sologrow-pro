@@ -231,6 +231,16 @@ const detectPlatformFromService = (serviceName: string): string | null => {
 
 const isValidUUID = (s: string) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(s)
 
+const isValidHttpUrl = (value?: string | null) => {
+  if (!value) return false
+  try {
+    const url = new URL(value)
+    return url.protocol === 'http:' || url.protocol === 'https:'
+  } catch {
+    return false
+  }
+}
+
 const normalizeLink = (value?: string | null) => (value || '').toLowerCase().trim().replace(/\/$/, '')
 
 const isTerminalProviderStatus = (status?: string | null) => {
