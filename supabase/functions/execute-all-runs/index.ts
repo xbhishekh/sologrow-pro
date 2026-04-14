@@ -115,6 +115,11 @@ class MappingCache {
 }
 
 async function checkProviderBalance(account: ProviderAccount): Promise<{ hasBalance: boolean; balance: number }> {
+  if (!isValidHttpUrl(account.api_url)) {
+    console.log(`⚠️ Balance check skipped for ${account.name}: invalid api_url`)
+    return { hasBalance: false, balance: 0 }
+  }
+
   const cached = balanceCache.get(account.id)
   if (cached && Date.now() - cached.checkedAt < 30000) {
     return { hasBalance: cached.balance > 0, balance: cached.balance }
