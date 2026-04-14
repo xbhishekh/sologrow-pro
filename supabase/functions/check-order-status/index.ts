@@ -346,7 +346,6 @@ Deno.serve(async (req) => {
               error_message: 'Order cancelled by user'
             }).eq('id', run.id)
           } else {
-            // Provider-side cancel/refund for active order: mark this run failed for retry
             const currentRetryCount = run.retry_count || 0
             if (currentRetryCount < 15) {
               console.log(`🔄 Marking cancelled/refunded run for retry (attempt ${currentRetryCount + 1}/15)`)
@@ -370,30 +369,47 @@ Deno.serve(async (req) => {
               await updateEngagementOrderStatus(supabase, run.engagement_order_item?.engagement_order_id, run.engagement_order_item?.id)
             }
           }
+        } else if (run.status === 'started' && isStatusStuck && ageMinutes >= 10) {
+          await supabase.from('organic_run_schedule').update({
+            ...trackingUpdate,
+            status: 'completed',
+            completed_at: new Date().toISOString(),
+            error_message: `Auto-completed after ${ageMinutes}min (status: ${result.status || 'unknown'})`
+          }).eq('id', run.id)
 
-          } else if (deliveredAll) {
-            await supabase.from('organic_run_schedule').update({
-              ...trackingUpdate,
-              status: 'completed',
-              completed_at: new Date().toISOString(),
-              error_message: 'Auto-completed (provider remains reached 0)'
-            }).eq('id', run.id)
+          completed++
+          results.push({
+            run_id: run.id,
+            run_number: run.run_number,
+            type: run.engagement_order_item?.engagement_type,
+            status: 'completed',
+            provider_order_id: run.provider_order_id,
+            delivered: delivered,
+            remains: remains
+          })
+          await updateEngagementOrderStatus(supabase, run.engagement_order_item?.engagement_order_id, run.engagement_order_item?.id)
+        } else if (deliveredAll) {
+          await supabase.from('organic_run_schedule').update({
+            ...trackingUpdate,
+            status: 'completed',
+            completed_at: new Date().toISOString(),
+            error_message: 'Auto-completed (provider remains reached 0)'
+          }).eq('id', run.id)
 
-            completed++
-            results.push({
-              run_id: run.id,
-              run_number: run.run_number,
-              type: run.engagement_order_item?.engagement_type,
-              status: 'completed',
-              provider_order_id: run.provider_order_id,
-              delivered: run.quantity_to_send,
-              remains: 0
-            })
-            await updateEngagementOrderStatus(supabase, run.engagement_order_item?.engagement_order_id, run.engagement_order_item?.id)
-          } else {
-          // Processing/Pending/In progress - update tracking data for live view
+          completed++
+          results.push({
+            run_id: run.id,
+            run_number: run.run_number,
+            type: run.engagement_order_item?.engagement_type,
+            status: 'completed',
+            provider_order_id: run.provider_order_id,
+            delivered: run.quantity_to_send,
+            remains: 0
+          })
+          await updateEngagementOrderStatus(supabase, run.engagement_order_item?.engagement_order_id, run.engagement_order_item?.id)
+        } else {
           await supabase.from('organic_run_schedule').update(trackingUpdate).eq('id', run.id)
-          
+
           stillProcessing++
           results.push({
             run_id: run.id,
