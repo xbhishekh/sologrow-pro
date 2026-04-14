@@ -1063,8 +1063,8 @@ serve(async (req) => {
           success: false, error: lastError, will_retry: true, retry_attempt: retryCount, postponed_min: postponeMs / 60000 })
       }
 
-      // Reduced delay between runs (was 500ms → 100ms)
-      await new Promise(resolve => setTimeout(resolve, 100))
+      // Minimal delay between runs for max throughput
+      await new Promise(resolve => setTimeout(resolve, 50))
     }
 
     // ==========================================
