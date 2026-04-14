@@ -1277,19 +1277,9 @@ async function processAllRuns(supabase: any, executionId: string, startTime: num
       }
     }
 
-    return new Response(JSON.stringify({
-      success: true, execution_id: executionId,
-      processed, skipped, failed, retried,
-      results: results.slice(0, 50), // Limit response size
-      debug: { execution_time_ms: totalTime }
-    }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-    })
+    console.log(`✅ Background execution [${executionId}] complete: ${processed} processed, ${skipped} skipped, ${failed} failed`)
 
   } catch (error: any) {
-    console.error('Execution error:', error)
-    return new Response(JSON.stringify({ error: error.message || 'Internal server error' }), {
-      status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-    })
+    console.error(`❌ Background execution error:`, error)
   }
-})
+}
