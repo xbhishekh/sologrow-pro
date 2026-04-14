@@ -466,7 +466,7 @@ serve(async (req) => {
       // 5. Recently busy runs (for cooldown)
       supabase
         .from('organic_run_schedule')
-        .select(`provider_account_id, error_message, engagement_order_item:engagement_order_items(engagement_order:engagement_orders(link))`)
+        .select(`provider_account_id, error_message, engagement_order_item:engagement_order_items(engagement_type, engagement_order:engagement_orders(link))`)
         .eq('status', 'pending')
         .gte('last_status_check', fifteenMinAgo),
     ])
@@ -546,7 +546,7 @@ serve(async (req) => {
     console.log(`Processing ${allEngagementRuns.length} runs (${deduplicatedRuns.length} pending + ${activeFailedRuns.length} retry), total overdue in DB: check query`)
 
     // PRE-BUILD busy account lookup for recently busy runs (link → Set<accountId>)
-    const recentlyBusyByLink = new Map<string, Set<string>>()
+    const recentlyBusyByLinkType = new Map<string, Set<string>>()
     if (recentlyBusyRuns && recentlyBusyRuns.length > 0) {
       for (const rbr of recentlyBusyRuns) {
         if (!rbr.provider_account_id) continue
@@ -555,8 +555,10 @@ serve(async (req) => {
           err.includes('wait until') || err.includes('processing previous') || err.includes('in progress')
         if (isBusyError) {
           const rbrLink = normalizeLink(getNestedEngagementOrderLink(rbr.engagement_order_item))
-          if (!recentlyBusyByLink.has(rbrLink)) recentlyBusyByLink.set(rbrLink, new Set())
-          recentlyBusyByLink.get(rbrLink)!.add(rbr.provider_account_id)
+          const rbrType = (rbr.engagement_order_item?.engagement_type || '').toLowerCase().trim()
+          const busyKey = `${rbrLink}|${rbrType}`
+          if (!recentlyBusyByLinkType.has(busyKey)) recentlyBusyByLinkType.set(busyKey, new Set())
+          recentlyBusyByLinkType.get(busyKey)!.add(rbr.provider_account_id)
         }
       }
     }
@@ -574,6 +576,13 @@ serve(async (req) => {
       const runType = (run.engagement_order_item?.engagement_type || '').toLowerCase()
       const linkTypeKey = `${runLink}|${runType}`
       if (runLink && activeOrderLinkTypes.has(linkTypeKey)) {
+        const newScheduledAt = new Date(Date.now() + ACTIVE_ORDER_RETRY_MS).toISOString()
+        await supabase.from('organic_run_schedule').update({
+          status: 'pending',
+          scheduled_at: newScheduledAt,
+          error_message: `[Postponed] Active order on link for ${runType}`,
+          last_status_check: new Date().toISOString(),
+        }).eq('id', run.id)
         skipped++
         continue
       }
@@ -673,7 +682,7 @@ serve(async (req) => {
       const sameLink = normalizeLink(orderLink)
       const currentServiceId = item.service?.id
       const sameLinkNormalized = sameLink
-      const currentTypeNormalized = currentType.toLowerCase().trim()
+      const currentTypeNormalized = (currentType || '').toLowerCase().trim()
       const localExecutionKey = `${sameLinkNormalized}|${currentTypeNormalized}`
       
       // Build busy account list
@@ -686,9 +695,9 @@ serve(async (req) => {
       }
       
       // From pre-fetched recently busy runs
-      const busyForLink = recentlyBusyByLink.get(sameLink)
-      if (busyForLink) {
-        for (const accId of busyForLink) {
+      const busyForLinkType = recentlyBusyByLinkType.get(localExecutionKey)
+      if (busyForLinkType) {
+        for (const accId of busyForLinkType) {
           if (!busyAccountIds.includes(accId)) busyAccountIds.push(accId)
         }
       }
