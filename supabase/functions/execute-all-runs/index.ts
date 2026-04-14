@@ -361,6 +361,9 @@ async function updateEngagementOrderStatus(supabase: SupabaseClient, engagementO
   await supabase.from('engagement_orders').update({ status: orderStatus }).eq('id', engagementOrderId).neq('status', 'cancelled')
 }
 
+// Declare EdgeRuntime for waitUntil support
+declare const EdgeRuntime: { waitUntil(promise: Promise<any>): void }
+
 serve(async (req) => {
   const startTime = Date.now()
   if (req.method === 'OPTIONS') {
