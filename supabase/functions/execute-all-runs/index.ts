@@ -408,15 +408,34 @@ serve(async (req) => {
       })
     }
 
-    const now = new Date().toISOString()
     const executionId = crypto.randomUUID().slice(0, 8)
     console.log(`=== EXECUTE ALL ORGANIC RUNS [${executionId}] ===`)
 
-    let processed = 0
-    let skipped = 0
-    let failed = 0
-    let retried = 0
-    const results: any[] = []
+    // Return 202 immediately, process in background to avoid context-canceled
+    const backgroundWork = processAllRuns(supabase, executionId, startTime)
+    
+    try {
+      EdgeRuntime.waitUntil(backgroundWork)
+    } catch {
+      // Fallback: if EdgeRuntime not available, await directly
+      await backgroundWork
+    }
+
+    return new Response(JSON.stringify({
+      success: true, execution_id: executionId,
+      message: 'Processing started in background'
+    }), {
+      status: 202,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    })
+
+  } catch (error: any) {
+    console.error('Execution error:', error)
+    return new Response(JSON.stringify({ error: error.message || 'Internal server error' }), {
+      status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    })
+  }
+})
 
     // ==========================================
     // OPTIMIZATION: Single mapping cache for entire invocation
