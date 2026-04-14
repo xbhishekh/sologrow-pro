@@ -1266,11 +1266,19 @@ async function processAllRuns(supabase: any, executionId: string, startTime: num
 
       const { data: provider } = await supabase
         .from('providers').select('*')
-        .eq('id', order.service.provider_id).single()
+        .eq('id', order.service.provider_id).maybeSingle()
 
       if (!provider) {
         await supabase.from('organic_run_schedule').update({
           status: 'failed', error_message: 'Provider not found',
+        }).eq('id', run.id)
+        failed++
+        continue
+      }
+
+      if (!isValidHttpUrl(provider.api_url)) {
+        await supabase.from('organic_run_schedule').update({
+          status: 'failed', error_message: 'Provider has invalid API URL',
         }).eq('id', run.id)
         failed++
         continue
