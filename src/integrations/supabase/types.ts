@@ -1106,6 +1106,7 @@ export type Database = {
       }
     }
     Functions: {
+      cleanup_old_completed_engagement_orders: { Args: never; Returns: Json }
       get_admin_dashboard_stats: { Args: never; Returns: Json }
       get_admin_users_summary: { Args: never; Returns: Json }
       get_user_role: {
