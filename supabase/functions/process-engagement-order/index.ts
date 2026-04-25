@@ -207,7 +207,7 @@ serve(async (req) => {
       description: `Engagement Order #${order.order_number}`,
     })
 
-    const createdItemIds = []
+    const createdItemIds: Array<{ type: string; itemId: string; engagement: any; finalServiceId: string }> = []
     for (const eng of engagements) {
       const { data: item } = await supabase.from('engagement_order_items').insert({
         engagement_order_id: order.id,
@@ -451,6 +451,6 @@ serve(async (req) => {
 
   } catch (error) {
     console.error('Error:', error)
-    return new Response(JSON.stringify({ error: error.message }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+      return new Response(JSON.stringify({ error: (error as Error).message }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
   }
 })
