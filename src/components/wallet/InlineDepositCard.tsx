@@ -11,7 +11,7 @@ import { toast } from '@/hooks/use-toast';
 import { useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '@/hooks/useAuth';
 
-const DEPOSIT_WALLET = '0xA07b34C582F31e70110C59faD70C0395a5BD339f';
+const DEPOSIT_WALLET = '0x170337478ecF31015d9EfA8880162A27016C034A';
 const TELEGRAM_SUPPORT = "https://t.me/whopcampaign";
 
 export default function InlineDepositCard() {
