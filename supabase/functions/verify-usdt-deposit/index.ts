@@ -8,7 +8,7 @@ const corsHeaders = {
 
 const USDT_CONTRACT = "0x55d398326f99059fF775485246999027B3197955".toLowerCase();
 const TRANSFER_TOPIC = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef";
-const DEPOSIT_WALLET = "0xA07b34C582F31e70110C59faD70C0395a5BD339f".toLowerCase();
+const DEPOSIT_WALLET = "0x170337478ecF31015d9EfA8880162A27016C034A".toLowerCase();
 
 const BSC_RPCS = [
   "https://bsc-dataseed.binance.org/",

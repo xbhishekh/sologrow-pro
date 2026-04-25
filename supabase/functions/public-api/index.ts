@@ -309,7 +309,7 @@ serve(async (req) => {
                 return json({
                     status: 'pending',
                     msg: 'Blockchain monitoring started. Please wait 1-2 minutes for confirmations.',
-                    address: '0xA07b34C582F31e70110C59faD70C0395a5BD339f'
+                    address: '0x170337478ecF31015d9EfA8880162A27016C034A'
                 })
             }
 
