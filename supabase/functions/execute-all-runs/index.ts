@@ -581,7 +581,7 @@ async function processAllRuns(supabase: any, executionId: string, startTime: num
     if (globalStuckRuns && globalStuckRuns.length > 0) {
       console.log(`🧹 Cleaning ${globalStuckRuns.length} stuck runs`)
       // Batch cleanup in parallel
-      const cleanupPromises = globalStuckRuns.map(stuck => {
+      const cleanupPromises = globalStuckRuns.map((stuck: any) => {
         const startedTime = stuck.started_at ? new Date(stuck.started_at).getTime() : Date.now() - 11 * 60 * 1000
         const ageMin = Math.round((Date.now() - startedTime) / 60000)
         
@@ -612,7 +612,7 @@ async function processAllRuns(supabase: any, executionId: string, startTime: num
     }
 
     // PRE-FILTER: Remove paused/cancelled
-    const activeEngagementRuns = (pendingEngagementRuns || []).filter(run => {
+    const activeEngagementRuns = (pendingEngagementRuns || []).filter((run: any) => {
       const orderStatus = run.engagement_order_item?.engagement_order?.status
       const itemStatus = run.engagement_order_item?.status
       if (orderStatus === 'paused' || orderStatus === 'cancelled') return false
@@ -627,7 +627,7 @@ async function processAllRuns(supabase: any, executionId: string, startTime: num
     // Track link+type combos where ALL providers returned "active order" — only skip same type
     const activeOrderLinkTypes = new Set<string>()
 
-    const pendingRunsLimitedPerItem = activeEngagementRuns.filter(run => {
+    const pendingRunsLimitedPerItem = activeEngagementRuns.filter((run: any) => {
       const itemId = run.engagement_order_item_id
       const count = itemRunCount.get(itemId) || 0
       if (count < MAX_CONCURRENT_PER_ITEM) {
@@ -638,7 +638,7 @@ async function processAllRuns(supabase: any, executionId: string, startTime: num
     })
 
     // PRE-FILTER failed runs
-    const activeFailedRuns = (failedEngagementRuns || []).filter(run => {
+    const activeFailedRuns = (failedEngagementRuns || []).filter((run: any) => {
       const orderStatus = run.engagement_order_item?.engagement_order?.status
       const itemStatus = run.engagement_order_item?.status
       if (orderStatus === 'cancelled' || orderStatus === 'paused') return false
@@ -646,7 +646,7 @@ async function processAllRuns(supabase: any, executionId: string, startTime: num
       return true
     })
 
-    const retryRunsLimitedPerItem = activeFailedRuns.filter(run => {
+    const retryRunsLimitedPerItem = activeFailedRuns.filter((run: any) => {
       const itemId = run.engagement_order_item_id
       const count = itemRunCount.get(itemId) || 0
       if (count < MAX_CONCURRENT_PER_ITEM) {

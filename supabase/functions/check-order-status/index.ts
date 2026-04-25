@@ -469,9 +469,9 @@ Deno.serve(async (req) => {
         continue
       }
 
-      console.log(`Checking ${runs.length} legacy orders on ${provider.name}`)
+      console.log(`Checking ${runs!.length} legacy orders on ${provider.name}`)
 
-      for (const run of runs) {
+      for (const run of runs!) {
         try {
           const formData = new URLSearchParams()
           formData.append('key', provider.api_key)
@@ -640,7 +640,7 @@ Deno.serve(async (req) => {
   } catch (error) {
     console.error('Status check error:', error)
     return new Response(JSON.stringify({ 
-      error: error.message || 'Internal server error' 
+      error: (error as Error).message || 'Internal server error' 
     }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }

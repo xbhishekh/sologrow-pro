@@ -263,7 +263,7 @@ serve(async (req) => {
         console.error(`Network error for run ${run.id}:`, fetchError)
         await supabase.from('organic_run_schedule').update({
           status: 'failed',
-          error_message: 'Network error: ' + (fetchError.message || 'Unknown')
+          error_message: 'Network error: ' + ((fetchError as Error).message || 'Unknown')
         }).eq('id', run.id)
         failed++
       }
@@ -288,7 +288,7 @@ serve(async (req) => {
   } catch (error) {
     console.error('Execution error:', error)
     return new Response(JSON.stringify({ 
-      error: error.message || 'Internal server error' 
+      error: (error as Error).message || 'Internal server error' 
     }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
