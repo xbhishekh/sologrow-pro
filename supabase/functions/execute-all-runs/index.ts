@@ -610,6 +610,7 @@ async function processAllRuns(supabase: any, executionId: string, startTime: num
     if (engagementRunsError) {
       console.error('Error fetching engagement runs:', engagementRunsError)
     }
+    console.log(`📥 Fetched ${pendingEngagementRuns?.length || 0} raw pending engagement runs from DB`)
 
     // PRE-FILTER: Remove paused/cancelled
     const activeEngagementRuns = (pendingEngagementRuns || []).filter((run: any) => {
