@@ -552,16 +552,18 @@ async function processAllRuns(supabase: any, executionId: string, startTime: num
       // 3. Pending engagement runs
       supabase
         .from('organic_run_schedule')
-        .select(`*, engagement_order_item:engagement_order_items(*, service:services(*), engagement_order:engagement_orders(*))`)
+        .select(`*, engagement_order_item:engagement_order_items!organic_run_schedule_engagement_order_item_id_fkey!inner(*, service:services(*), engagement_order:engagement_orders!inner(*))`)
         .eq('status', 'pending')
         .not('engagement_order_item_id', 'is', null)
         .lte('scheduled_at', nowWithBuffer)
+        .not('engagement_order_item.status', 'in', '("paused","cancelled")')
+        .not('engagement_order_item.engagement_order.status', 'in', '("paused","cancelled")')
         .order('scheduled_at', { ascending: true })
         .limit(1000),
       // 4. Failed engagement runs for retry
       supabase
         .from('organic_run_schedule')
-        .select(`*, engagement_order_item:engagement_order_items(*, service:services(*), engagement_order:engagement_orders(*))`)
+        .select(`*, engagement_order_item:engagement_order_items!organic_run_schedule_engagement_order_item_id_fkey(*, service:services(*), engagement_order:engagement_orders(*))`)
         .eq('status', 'failed')
         .lt('retry_count', 99)
         .not('engagement_order_item_id', 'is', null)
@@ -610,6 +612,7 @@ async function processAllRuns(supabase: any, executionId: string, startTime: num
     if (engagementRunsError) {
       console.error('Error fetching engagement runs:', engagementRunsError)
     }
+    console.log(`📥 Fetched ${pendingEngagementRuns?.length || 0} raw pending engagement runs from DB`)
 
     // PRE-FILTER: Remove paused/cancelled
     const activeEngagementRuns = (pendingEngagementRuns || []).filter((run: any) => {
