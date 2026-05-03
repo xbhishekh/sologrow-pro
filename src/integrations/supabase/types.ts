@@ -652,10 +652,16 @@ export type Database = {
         Row: {
           api_key: string
           api_url: string
+          balance: number | null
+          balance_checked_at: string | null
+          balance_currency: string | null
           created_at: string | null
           id: string
           is_active: boolean | null
+          last_balance_error: string | null
+          last_low_balance_alert_at: string | null
           last_used_at: string | null
+          low_balance_threshold: number
           name: string
           priority: number | null
           provider_id: string
@@ -664,10 +670,16 @@ export type Database = {
         Insert: {
           api_key: string
           api_url: string
+          balance?: number | null
+          balance_checked_at?: string | null
+          balance_currency?: string | null
           created_at?: string | null
           id?: string
           is_active?: boolean | null
+          last_balance_error?: string | null
+          last_low_balance_alert_at?: string | null
           last_used_at?: string | null
+          low_balance_threshold?: number
           name: string
           priority?: number | null
           provider_id: string
@@ -676,10 +688,16 @@ export type Database = {
         Update: {
           api_key?: string
           api_url?: string
+          balance?: number | null
+          balance_checked_at?: string | null
+          balance_currency?: string | null
           created_at?: string | null
           id?: string
           is_active?: boolean | null
+          last_balance_error?: string | null
+          last_low_balance_alert_at?: string | null
           last_used_at?: string | null
+          low_balance_threshold?: number
           name?: string
           priority?: number | null
           provider_id?: string
