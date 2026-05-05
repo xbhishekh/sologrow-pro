@@ -853,6 +853,39 @@ async function processAllRuns(supabase: any, executionId: string, startTime: num
           if (!busyAccountIds.includes(accId)) busyAccountIds.push(accId)
         }
       }
+
+      // FALLBACK: If this run already failed/cancelled on a provider, exclude it on retry
+      // so the system tries a backup provider instead of repeating the same one.
+      if (isRetry && run.provider_account_id) {
+        if (!busyAccountIds.includes(run.provider_account_id)) {
+          busyAccountIds.push(run.provider_account_id)
+          console.log(`🔁 Retry run #${run.run_number}: excluding previous provider ${run.provider_account_name || run.provider_account_id} (failed/cancelled), will try backup`)
+        }
+      }
+
+      // FALLBACK: Also exclude any provider_account_id that already failed/cancelled
+      // for this SAME engagement_order_item (prevents same-provider repeat across retries).
+      try {
+        const { data: priorFailedForItem } = await supabase
+          .from('organic_run_schedule')
+          .select('provider_account_id, error_message, provider_status')
+          .eq('engagement_order_item_id', item.id)
+          .in('status', ['failed', 'cancelled'])
+          .not('provider_account_id', 'is', null)
+          .limit(50)
+        if (priorFailedForItem) {
+          for (const pr of priorFailedForItem as any[]) {
+            const ps = (pr.provider_status || '').toLowerCase()
+            const em = (pr.error_message || '').toLowerCase()
+            const wasCancelled =
+              ps.includes('cancel') || ps.includes('refund') ||
+              em.includes('cancel') || em.includes('refund')
+            if (wasCancelled && pr.provider_account_id && !busyAccountIds.includes(pr.provider_account_id)) {
+              busyAccountIds.push(pr.provider_account_id)
+            }
+          }
+        }
+      } catch (_e) { /* non-fatal */ }
       
       // From active (started) runs for same link+type
       const startedRunsForLink = (activeRuns || []).filter((r: any) => {
