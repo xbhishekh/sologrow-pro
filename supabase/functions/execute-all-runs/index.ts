@@ -876,19 +876,15 @@ async function processAllRuns(supabase: any, executionId: string, startTime: num
       try {
         const { data: priorFailedForItem } = await supabase
           .from('organic_run_schedule')
-          .select('provider_account_id, error_message, provider_status')
+          .select('id, provider_account_id, error_message, provider_status, status')
           .eq('engagement_order_item_id', item.id)
-          .in('status', ['failed', 'cancelled'])
           .not('provider_account_id', 'is', null)
-          .limit(50)
+          .limit(200)
         if (priorFailedForItem) {
           for (const pr of priorFailedForItem as any[]) {
-            const ps = (pr.provider_status || '').toLowerCase()
-            const em = (pr.error_message || '').toLowerCase()
-            const wasCancelled =
-              ps.includes('cancel') || ps.includes('refund') ||
-              em.includes('cancel') || em.includes('refund')
-            if (wasCancelled && pr.provider_account_id && !busyAccountIds.includes(pr.provider_account_id)) {
+            // STRICT NO-REPEAT: exclude ANY provider already touched on this item
+            // (regardless of outcome). Prevents repeats for the same service/item.
+            if (pr.id !== run.id && pr.provider_account_id && !busyAccountIds.includes(pr.provider_account_id)) {
               busyAccountIds.push(pr.provider_account_id)
             }
           }
