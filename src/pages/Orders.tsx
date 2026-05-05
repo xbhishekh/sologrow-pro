@@ -567,7 +567,7 @@ export default function Orders() {
                                       : isCompleted
                                         ? 'bg-emerald-500/10 border border-emerald-500/30'
                                         : isFailed
-                                          ? 'bg-rose-500/10 border border-rose-500/30'
+                                          ? 'bg-green-500/10 border border-green-500/30'
                                           : 'bg-violet-500/5 border border-violet-500/20'
                                   }`}
                                 >
@@ -581,7 +581,7 @@ export default function Orders() {
                                           : isCompleted
                                             ? 'bg-gradient-to-br from-emerald-500 to-teal-500 text-white'
                                             : isFailed
-                                              ? 'bg-gradient-to-br from-rose-500 to-red-500 text-white'
+                                              ? 'bg-gradient-to-br from-green-500 to-red-500 text-white'
                                               : 'bg-gradient-to-br from-violet-500 to-purple-500 text-white'
                                       }`}>
                                         #{run.run_number}
@@ -597,7 +597,7 @@ export default function Orders() {
                                               : isCompleted
                                                 ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
                                                 : isFailed
-                                                  ? 'bg-rose-500/20 text-rose-400 border border-rose-500/30'
+                                                  ? 'bg-green-500/20 text-green-400 border border-green-500/30'
                                                   : 'bg-violet-500/20 text-violet-400 border border-violet-500/30'
                                           }`}>
                                             {isActive && <Loader2 className="h-3 w-3 animate-spin" />}
@@ -635,7 +635,7 @@ export default function Orders() {
                                           )}
                                           
                                           {/* Variance - Blue for positive, Pink for negative */}
-                                          <span className={`text-[10px] font-medium ${Number(run.variance_applied) >= 0 ? 'text-sky-400' : 'text-pink-400'}`}>
+                                          <span className={`text-[10px] font-medium ${Number(run.variance_applied) >= 0 ? 'text-sky-400' : 'text-green-400'}`}>
                                             ({Number(run.variance_applied) >= 0 ? '+' : ''}{run.variance_applied})
                                           </span>
                                         </div>

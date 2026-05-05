@@ -118,19 +118,19 @@ export default function RazorpayDepositCard() {
 
         {/* Progress bar */}
         <div className="flex gap-1 px-4 pt-3">
-          <div className="h-1 flex-1 rounded-full" style={{ background: '#ec4899' }} />
-          <div className="h-1 flex-1 rounded-full" style={{ background: ['pay_and_submit', 'done'].includes(step) ? '#ec4899' : 'rgba(0,0,0,.06)' }} />
-          <div className="h-1 flex-1 rounded-full" style={{ background: step === 'done' ? '#ec4899' : 'rgba(0,0,0,.06)' }} />
+          <div className="h-1 flex-1 rounded-full" style={{ background: '#16a34a' }} />
+          <div className="h-1 flex-1 rounded-full" style={{ background: ['pay_and_submit', 'done'].includes(step) ? '#16a34a' : 'rgba(0,0,0,.06)' }} />
+          <div className="h-1 flex-1 rounded-full" style={{ background: step === 'done' ? '#16a34a' : 'rgba(0,0,0,.06)' }} />
         </div>
 
         {/* Header */}
         <div className="p-5 pb-4 flex items-center gap-3" style={{ borderBottom: '1px solid rgba(0,0,0,.04)' }}>
-          <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'rgba(236,72,153,.1)' }}>
-            <IndianRupee className="h-5 w-5" style={{ color: '#ec4899' }} />
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'rgba(22, 163, 74,.1)' }}>
+            <IndianRupee className="h-5 w-5" style={{ color: '#16a34a' }} />
           </div>
           <div>
             <h2 className="text-[16px] font-bold" style={{ color: '#1a1a2e' }}>UPI / Card Deposit</h2>
-            <p className="text-[10px] font-medium" style={{ color: '#ec4899' }}>Manual Verification • 5-10 min</p>
+            <p className="text-[10px] font-medium" style={{ color: '#16a34a' }}>Manual Verification • 5-10 min</p>
           </div>
         </div>
 
@@ -146,9 +146,9 @@ export default function RazorpayDepositCard() {
                     onClick={() => setInrAmount(String(amt))}
                     className="py-3 rounded-xl text-[14px] font-bold transition-all"
                     style={{
-                      background: inrAmount === String(amt) ? '#ec4899' : 'rgba(0,0,0,.02)',
+                      background: inrAmount === String(amt) ? '#16a34a' : 'rgba(0,0,0,.02)',
                       color: inrAmount === String(amt) ? 'white' : '#555',
-                      border: `1px solid ${inrAmount === String(amt) ? '#ec4899' : 'rgba(0,0,0,.06)'}`,
+                      border: `1px solid ${inrAmount === String(amt) ? '#16a34a' : 'rgba(0,0,0,.06)'}`,
                     }}
                   >
                     ₹{amt}
@@ -160,7 +160,7 @@ export default function RazorpayDepositCard() {
             <div>
               <p className="text-[11px] font-semibold mb-2" style={{ color: '#888' }}>Manual Amount (INR)</p>
               <div className="relative">
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[18px] font-bold" style={{ color: '#ec4899' }}>₹</span>
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[18px] font-bold" style={{ color: '#16a34a' }}>₹</span>
                 <Input
                   type="number"
                   value={inrAmount}
@@ -184,7 +184,7 @@ export default function RazorpayDepositCard() {
               onClick={() => setStep('pay_and_submit')}
               disabled={!inrAmount || Number(inrAmount) < 30}
               className="w-full h-13 rounded-xl text-[14px] font-bold text-white"
-              style={{ background: 'linear-gradient(135deg, #ec4899, #db2777)', boxShadow: '0 4px 16px rgba(236,72,153,.3)' }}
+              style={{ background: 'linear-gradient(135deg, #16a34a, #15803d)', boxShadow: '0 4px 16px rgba(22, 163, 74,.3)' }}
             >
               Pay ₹{inrAmount || '0'} <ArrowRight className="h-4 w-4 ml-2" />
             </Button>
@@ -195,10 +195,10 @@ export default function RazorpayDepositCard() {
         {step === 'pay_and_submit' && (
           <div className="p-5 space-y-5">
             {/* Pay instruction */}
-            <div className="rounded-xl p-4" style={{ background: 'rgba(236,72,153,.04)', border: '1px solid rgba(236,72,153,.1)' }}>
+            <div className="rounded-xl p-4" style={{ background: 'rgba(22, 163, 74,.04)', border: '1px solid rgba(22, 163, 74,.1)' }}>
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
-                  <span className="w-6 h-6 rounded-full text-[11px] font-bold text-white flex items-center justify-center" style={{ background: '#ec4899' }}>1</span>
+                  <span className="w-6 h-6 rounded-full text-[11px] font-bold text-white flex items-center justify-center" style={{ background: '#16a34a' }}>1</span>
                   <span className="text-[13px] font-bold" style={{ color: '#1a1a2e' }}>Pay ₹{inrAmount}</span>
                 </div>
               </div>
@@ -210,7 +210,7 @@ export default function RazorpayDepositCard() {
               <Button
                 onClick={() => window.open(RAZORPAY_PAGE_URL, '_blank')}
                 className="w-full h-12 rounded-xl text-[13px] font-bold text-white mb-2"
-                style={{ background: 'linear-gradient(135deg, #ec4899, #db2777)', boxShadow: '0 4px 14px rgba(236,72,153,.3)' }}
+                style={{ background: 'linear-gradient(135deg, #16a34a, #15803d)', boxShadow: '0 4px 14px rgba(22, 163, 74,.3)' }}
               >
                 <ExternalLink className="h-4 w-4 mr-2" /> Pay Now — ₹{inrAmount}
               </Button>
@@ -307,7 +307,7 @@ export default function RazorpayDepositCard() {
             <p className="text-[13px] p-3 rounded-xl" style={{ background: 'rgba(0,0,0,.02)', color: '#666', border: '1px solid rgba(0,0,0,.04)' }}>
               Your deposit will be credited within <strong>5-10 minutes</strong>.
             </p>
-            <Button onClick={() => setStep('amount')} className="w-full h-11 rounded-xl font-semibold" style={{ background: '#ec4899', color: 'white' }}>
+            <Button onClick={() => setStep('amount')} className="w-full h-11 rounded-xl font-semibold" style={{ background: '#16a34a', color: 'white' }}>
               Done
             </Button>
           </div>

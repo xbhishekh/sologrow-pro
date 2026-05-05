@@ -357,7 +357,7 @@ export function getCategoryDisplayInfo(category: ServiceCategory): {
 } {
   const info: Record<ServiceCategory, { emoji: string; color: string; label: string }> = {
     views: { emoji: '👁️', color: 'text-cyan-400', label: 'Views' },
-    likes: { emoji: '❤️', color: 'text-rose-400', label: 'Likes' },
+    likes: { emoji: '❤️', color: 'text-green-400', label: 'Likes' },
     comments: { emoji: '💬', color: 'text-emerald-400', label: 'Comments' },
     followers: { emoji: '👥', color: 'text-indigo-400', label: 'Followers' },
     subscribers: { emoji: '🔔', color: 'text-red-400', label: 'Subscribers' },
@@ -365,7 +365,7 @@ export function getCategoryDisplayInfo(category: ServiceCategory): {
     shares: { emoji: '🔄', color: 'text-violet-400', label: 'Shares' },
     saves: { emoji: '📥', color: 'text-amber-400', label: 'Saves' },
     watch_hours: { emoji: '⏱️', color: 'text-orange-400', label: 'Watch Hours' },
-    reposts: { emoji: '🔄', color: 'text-pink-400', label: 'Reposts' },
+    reposts: { emoji: '🔄', color: 'text-green-400', label: 'Reposts' },
     generic: { emoji: '📊', color: 'text-muted-foreground', label: 'Service' },
   };
   

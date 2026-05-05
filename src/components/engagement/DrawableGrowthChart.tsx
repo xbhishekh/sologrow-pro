@@ -38,7 +38,7 @@ const VISIBLE_TYPES: VisibleType[] = ['views', 'likes', 'comments', 'saves', 'sh
 const TYPE_COLORS: Record<VisibleType, string> = {
   views: '#60a5fa',
   comments: '#34d399',
-  likes: '#f472b6',
+  likes: '#4ade80',
   saves: '#fbbf24',
   shares: '#a78bfa',
 };
