@@ -680,13 +680,19 @@ async function updateEngagementOrderStatus(supabase: any, engagementOrderId: str
       if (itemRuns && itemRuns.length > 0) {
         const completedCount = itemRuns.filter((r: any) => r.status === 'completed').length
         const failedCount = itemRuns.filter((r: any) => r.status === 'failed').length
+        const cancelledCount = itemRuns.filter((r: any) => r.status === 'cancelled').length
+        const activeCount = itemRuns.filter((r: any) => r.status === 'pending' || r.status === 'started').length
         const totalRuns = itemRuns.length
 
         let itemStatus = 'processing'
-        if (completedCount === totalRuns) {
+        if (activeCount > 0) {
+          itemStatus = currentItem?.status === 'paused' ? 'paused' : 'processing'
+        } else if (completedCount === totalRuns) {
           itemStatus = 'completed'
-        } else if (completedCount + failedCount === totalRuns) {
-          itemStatus = failedCount > 0 ? 'partial' : 'completed'
+        } else if (completedCount > 0 && completedCount + failedCount + cancelledCount === totalRuns) {
+          itemStatus = 'partial'
+        } else if (failedCount + cancelledCount === totalRuns) {
+          itemStatus = 'failed'
         }
 
         await supabase.from('engagement_order_items').update({ status: itemStatus }).eq('id', itemId)
@@ -703,7 +709,10 @@ async function updateEngagementOrderStatus(supabase: any, engagementOrderId: str
   if (!allItems || allItems.length === 0) return
 
   const completedItems = allItems.filter((i: any) => i.status === 'completed').length
+  const partialItems = allItems.filter((i: any) => i.status === 'partial').length
   const failedItems = allItems.filter((i: any) => i.status === 'failed').length
+  const cancelledItems = allItems.filter((i: any) => i.status === 'cancelled').length
+  const activeItems = allItems.filter((i: any) => i.status === 'processing' || i.status === 'pending').length
   const totalItems = allItems.length
 
   console.log(`Engagement Order ${engagementOrderId} progress: ${completedItems}/${totalItems} items completed`)
@@ -711,10 +720,12 @@ async function updateEngagementOrderStatus(supabase: any, engagementOrderId: str
   let orderStatus = 'processing'
   if (completedItems === totalItems) {
     orderStatus = 'completed'
-  } else if (completedItems + failedItems === totalItems && failedItems > 0) {
-    orderStatus = 'partial'
   } else if (failedItems === totalItems) {
     orderStatus = 'failed'
+  } else if (activeItems === 0 && completedItems + partialItems + failedItems + cancelledItems === totalItems) {
+    orderStatus = completedItems > 0 ? 'partial' : failedItems > 0 ? 'failed' : 'cancelled'
+  } else if (parentOrder?.status === 'paused') {
+    orderStatus = 'paused'
   }
 
   await supabase.from('engagement_orders').update({ status: orderStatus }).eq('id', engagementOrderId).neq('status', 'cancelled')
