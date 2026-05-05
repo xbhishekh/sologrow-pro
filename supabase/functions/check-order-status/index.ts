@@ -206,12 +206,18 @@ Deno.serve(async (req) => {
               if (currentRetryCount < 15) {
                 // Mark for retry - don't mark as failed, just reset to failed so execute-all-runs will retry
                 console.log(`🔄 Marking run for retry (attempt ${currentRetryCount + 1}/15)`)
+                const triedSet = new Set<string>(
+                  Array.isArray(run.provider_response?.tried_providers) ? run.provider_response.tried_providers : []
+                )
+                if (run.provider_account_id) triedSet.add(run.provider_account_id)
+                const mergedResp = { ...(run.provider_response || {}), tried_providers: Array.from(triedSet) }
                 await supabase.from('organic_run_schedule').update({
                   status: 'failed',
                   error_message: `Auto-retry: ${result.error}`,
                   completed_at: new Date().toISOString(),
                   provider_status: 'error',
                   last_status_check: new Date().toISOString(),
+                  provider_response: mergedResp,
                 }).eq('id', run.id)
                 failed++
               } else {
@@ -349,8 +355,14 @@ Deno.serve(async (req) => {
             const currentRetryCount = run.retry_count || 0
             if (currentRetryCount < 15) {
               console.log(`🔄 Marking cancelled/refunded run for retry (attempt ${currentRetryCount + 1}/15)`)
+              const triedSet = new Set<string>(
+                Array.isArray(run.provider_response?.tried_providers) ? run.provider_response.tried_providers : []
+              )
+              if (run.provider_account_id) triedSet.add(run.provider_account_id)
+              const mergedResp = { ...(trackingUpdate.provider_response || {}), tried_providers: Array.from(triedSet) }
               await supabase.from('organic_run_schedule').update({
                 ...trackingUpdate,
+                provider_response: mergedResp,
                 status: 'failed',
                 completed_at: new Date().toISOString(),
                 error_message: `Auto-retry: ${providerStatus} by provider`
