@@ -67,9 +67,9 @@ const supabaseModule = createClient(
 // Avoids repeated DB queries for same service
 // ==========================================
 class MappingCache {
-  private cache = new Map<string, { account: ProviderAccount; providerServiceId: string }[]>()
+  private cache = new Map<string, { account: ProviderAccount; providerServiceId: string; minQuantity: number }[]>()
   
-  async getForService(supabase: any, serviceId: string, excludeIds: string[], executionId: string): Promise<{ account: ProviderAccount; providerServiceId: string }[]> {
+  async getForService(supabase: any, serviceId: string, excludeIds: string[], executionId: string): Promise<{ account: ProviderAccount; providerServiceId: string; minQuantity: number }[]> {
     // Fetch once per service per invocation
     if (!this.cache.has(serviceId)) {
       const { data: mappings, error } = await supabase
@@ -91,11 +91,15 @@ class MappingCache {
           return aTime - bTime
         })
         
-        const accounts: { account: ProviderAccount; providerServiceId: string }[] = []
+        const accounts: { account: ProviderAccount; providerServiceId: string; minQuantity: number }[] = []
         for (const mapping of sorted) {
           const account = mapping.provider_account as ProviderAccount
           if (account && account.is_active && isValidHttpUrl(account.api_url)) {
-            accounts.push({ account, providerServiceId: mapping.provider_service_id })
+            accounts.push({
+              account,
+              providerServiceId: mapping.provider_service_id,
+              minQuantity: Number((mapping as any).min_quantity || 0),
+            })
           } else if (account && account.is_active && !isValidHttpUrl(account.api_url)) {
             console.log(`⚠️ Skipping provider ${account.name}: invalid api_url`)
           }
@@ -921,14 +925,18 @@ async function processAllRuns(supabase: any, executionId: string, startTime: num
         }
       }
       
-      const accountsToTry: { account: ProviderAccount; providerServiceId: string }[] = [...availableAccounts]
+      const accountsToTry: { account: ProviderAccount; providerServiceId: string; minQuantity: number }[] = [...availableAccounts]
       accountsToTry.sort((a, b) => {
         const aRecent = recentCompletedAccountIds.has(a.account.id) ? 1 : 0
         const bRecent = recentCompletedAccountIds.has(b.account.id) ? 1 : 0
         return aRecent - bRecent
       })
       if (defaultProvider && !accountsToTry.some(a => a.account.id === defaultProvider!.id)) {
-        accountsToTry.push({ account: defaultProvider, providerServiceId: item.service.provider_service_id })
+        accountsToTry.push({
+          account: defaultProvider,
+          providerServiceId: item.service.provider_service_id,
+          minQuantity: Number(item.service.min_quantity || 0),
+        })
       }
       
       if (accountsToTry.length === 0) {
@@ -954,18 +962,15 @@ async function processAllRuns(supabase: any, executionId: string, startTime: num
         continue
       }
 
-      // Quantity handling — respect configured service minimum only
-      let quantityToSend = run.quantity_to_send
-      const serviceMinQty = Number(item.service.min_quantity || 0)
-      const effectiveMin = serviceMinQty > 0 ? serviceMinQty : quantityToSend
-      
-      if (quantityToSend < effectiveMin) {
-        console.log(`📏 Run #${run.run_number}: qty ${quantityToSend} below configured min ${effectiveMin}, boosting`)
-        quantityToSend = effectiveMin
-        await supabase.from('organic_run_schedule')
-          .update({ quantity_to_send: quantityToSend })
-          .eq('id', run.id)
-      }
+      // Quantity handling — pick the LOWEST-min provider first so small runs aren't rejected
+      const originalQty = run.quantity_to_send
+      accountsToTry.sort((a, b) => {
+        const aFits = (a.minQuantity || 0) <= originalQty ? 0 : 1
+        const bFits = (b.minQuantity || 0) <= originalQty ? 0 : 1
+        if (aFits !== bFits) return aFits - bFits
+        return (a.minQuantity || 0) - (b.minQuantity || 0)
+      })
+      let quantityToSend = originalQty
 
       console.log(`🔄 Run #${run.run_number}: ${quantityToSend} ${item.engagement_type}, trying ${accountsToTry.length} accounts`)
 
@@ -981,7 +986,13 @@ async function processAllRuns(supabase: any, executionId: string, startTime: num
       let verifiedCharge: number | null = null
       let verifiedLastStatusCheck: string | null = null
       
-      for (const { account: selectedAccount, providerServiceId } of accountsToTry) {
+      for (const { account: selectedAccount, providerServiceId, minQuantity: accountMinQty } of accountsToTry) {
+        // Per-account quantity: boost up to this account's minimum if needed
+        let attemptQty = originalQty
+        if (accountMinQty && accountMinQty > attemptQty) {
+          attemptQty = accountMinQty
+        }
+        quantityToSend = attemptQty
         // PRE-CHECK: Cancel check
         {
           const { data: freshItem } = await supabase
