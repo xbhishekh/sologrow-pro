@@ -312,10 +312,10 @@ export default function EngagementOrder() {
         const ratioQuantity = Math.round(debouncedBaseQuantity * (ratioPercent / 100));
 
         const serviceData = servicePrices[type];
-        const serviceMin = serviceData?.minQuantity ?? prev[type]?.minQuantity ?? 0;
 
-        // Clamp quantity to service minimum
-        const quantity = serviceMin > 0 ? Math.max(serviceMin, ratioQuantity) : ratioQuantity;
+        // Respect user's base quantity exactly — no auto bump to provider minimum.
+        // If it's below provider min, the per-card warning will appear.
+        const quantity = ratioQuantity;
 
         updated[type] = {
           type,
