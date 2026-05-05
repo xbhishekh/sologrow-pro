@@ -6,7 +6,7 @@ import { PageMeta } from "@/components/seo/PageMeta";
 export default function PrivacyPolicy() {
   return (
     <>
-      <PageMeta title="Privacy Policy | OrganicSMM" description="Learn how OrganicSMM collects, uses, and protects your personal data." canonicalPath="/privacy" />
+      <PageMeta title="Privacy Policy | OrganicSMM" description="Learn how OrganicSMM collects, uses, and protects your personal data." canonicalPath="/privacy" breadcrumbs={[{ name: "Home", path: "/" }, { name: "Privacy Policy", path: "/privacy" }]} />
       <div className="min-h-screen bg-background text-foreground">
         <div className="max-w-4xl mx-auto px-4 py-12">
           <Link to="/">

@@ -6,7 +6,7 @@ import { PageMeta } from "@/components/seo/PageMeta";
 export default function RefundPolicy() {
   return (
     <>
-      <PageMeta title="Refund Policy | OrganicSMM" description="Understand OrganicSMM's refund and cancellation policies." canonicalPath="/refund" />
+      <PageMeta title="Refund Policy | OrganicSMM" description="Understand OrganicSMM's refund and cancellation policies." canonicalPath="/refund" breadcrumbs={[{ name: "Home", path: "/" }, { name: "Refund Policy", path: "/refund" }]} />
       <div className="min-h-screen bg-background text-foreground">
         <div className="max-w-4xl mx-auto px-4 py-12">
           <Link to="/"><Button variant="ghost" size="sm" className="mb-8 gap-2"><ArrowLeft className="h-4 w-4" /> Back to Home</Button></Link>

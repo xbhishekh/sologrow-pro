@@ -6,7 +6,7 @@ import { PageMeta } from "@/components/seo/PageMeta";
 export default function TermsOfService() {
   return (
     <>
-      <PageMeta title="Terms of Service | OrganicSMM" description="Read the Terms of Service for OrganicSMM platform." canonicalPath="/terms" />
+      <PageMeta title="Terms of Service | OrganicSMM" description="Read the Terms of Service for OrganicSMM platform." canonicalPath="/terms" breadcrumbs={[{ name: "Home", path: "/" }, { name: "Terms of Service", path: "/terms" }]} />
       <div className="min-h-screen bg-background text-foreground">
         <div className="max-w-4xl mx-auto px-4 py-12">
           <Link to="/"><Button variant="ghost" size="sm" className="mb-8 gap-2"><ArrowLeft className="h-4 w-4" /> Back to Home</Button></Link>
