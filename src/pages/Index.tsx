@@ -1,194 +1,242 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, TrendingUp, Zap, Shield, BarChart3, CheckCircle2, Shuffle, Clock, Moon, Timer, Eye, ChevronRight, FileText, Lock, HelpCircle, Mail, Code2, Activity, X, Check } from 'lucide-react';
+import { ArrowRight, TrendingUp, Zap, Shield, BarChart3, CheckCircle2, Shuffle, Clock, Moon, Timer, Eye, ChevronRight, FileText, Lock, HelpCircle, Mail, Code2, Activity, Sparkles, Star } from 'lucide-react';
 import logo from '@/assets/logo.jpg';
 import { PageMeta } from '@/components/seo/PageMeta';
 
+// Brand palette — clean light + soft orange
+const C = {
+  bg: '#FAFAF7',
+  ink: '#0B0B12',
+  ink2: '#5B5B6B',
+  muted: '#8A8A99',
+  line: 'rgba(11,11,18,.07)',
+  card: '#FFFFFF',
+  orange: '#FF6A1A',
+  orangeDeep: '#E0530B',
+  peach: '#FFF1E6',
+  soft: '0 1px 2px rgba(11,11,18,.04), 0 8px 24px rgba(11,11,18,.05)',
+  softLg: '0 2px 4px rgba(11,11,18,.04), 0 24px 60px rgba(255,106,26,.10)',
+};
+
+const Pill: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[11px] sm:text-[12px] font-semibold"
+    style={{ background: C.peach, color: C.orangeDeep, border: `1px solid rgba(255,106,26,.18)` }}>
+    {children}
+  </span>
+);
+
 const Index = () => {
   return (
-    <div className="min-h-screen w-full overflow-x-hidden" style={{ background: 'linear-gradient(180deg, #fff 0%, #fdf2f8 30%, #fce7f3 50%, #fdf2f8 70%, #f9fafb 100%)', fontFamily: "'Inter', system-ui, sans-serif" }}>
+    <div className="min-h-screen w-full overflow-x-hidden" style={{ background: C.bg, color: C.ink, fontFamily: "'Inter', system-ui, sans-serif" }}>
       <PageMeta
         title="OrganicSMM — Organic Social Media Growth Platform"
         description="Revolutionary organic social media growth with natural delivery patterns. 100% safe for your accounts."
       />
 
+      {/* Subtle background glow */}
+      <div aria-hidden className="pointer-events-none fixed inset-0 -z-10">
+        <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[1100px] h-[600px] rounded-full"
+          style={{ background: 'radial-gradient(closest-side, rgba(255,106,26,.18), transparent 70%)', filter: 'blur(20px)' }} />
+        <div className="absolute top-[40%] -right-40 w-[500px] h-[500px] rounded-full"
+          style={{ background: 'radial-gradient(closest-side, rgba(255,180,120,.18), transparent 70%)', filter: 'blur(20px)' }} />
+      </div>
+
       {/* ═══ NAV ═══ */}
-      <nav className="sticky top-0 z-50 w-full" style={{ background: 'rgba(255,255,255,.85)', backdropFilter: 'blur(16px)', borderBottom: '1px solid rgba(0,0,0,.06)' }}>
-        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
-          <Link to="/" className="flex items-center gap-2.5 sm:gap-3 flex-shrink-0 group">
-            {/* Logo with glowing gradient ring */}
+      <nav className="sticky top-3 z-50 w-full px-3 sm:px-4">
+        <div className="max-w-6xl mx-auto rounded-2xl flex items-center justify-between h-14 px-3 sm:px-4"
+          style={{ background: 'rgba(255,255,255,.78)', backdropFilter: 'blur(18px) saturate(160%)', border: `1px solid ${C.line}`, boxShadow: C.soft }}>
+          <Link to="/" className="flex items-center gap-2.5 group">
             <div className="relative">
-              <div className="absolute -inset-0.5 rounded-2xl opacity-70 group-hover:opacity-100 blur-sm transition-opacity" style={{ background: 'linear-gradient(135deg, #ec4899, #f97316, #ec4899)' }} />
-              <div className="relative p-[2px] rounded-2xl" style={{ background: 'linear-gradient(135deg, #ec4899, #f97316)' }}>
-                <img src={logo} alt="OrganicSMM" className="w-9 h-9 sm:w-10 sm:h-10 rounded-[14px] object-cover bg-white" />
-              </div>
-              {/* tiny v2 dot */}
-              <span className="absolute -top-1 -right-1 text-[7px] font-black text-white px-1.5 py-[1px] rounded-full leading-none flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #ec4899, #db2777)', boxShadow: '0 2px 6px rgba(236,72,153,.5)', border: '1.5px solid white' }}>
-                v2
-              </span>
+              <div className="absolute -inset-1 rounded-2xl opacity-60 blur-md transition-opacity group-hover:opacity-90"
+                style={{ background: `linear-gradient(135deg, ${C.orange}, #FFB37A)` }} />
+              <img src={logo} alt="OrganicSMM" className="relative w-8 h-8 sm:w-9 sm:h-9 rounded-xl object-cover bg-white"
+                style={{ border: '1.5px solid white', boxShadow: C.soft }} />
             </div>
-            <div className="flex flex-col leading-none gap-1">
-              <span className="text-[15px] sm:text-[17px] font-extrabold tracking-tight" style={{ color: '#1a1a2e' }}>OrganicSMM</span>
-              <span className="inline-flex items-center gap-1 text-[8px] sm:text-[9px] font-bold uppercase tracking-[0.14em] px-1.5 py-[2px] rounded-full self-start" style={{ background: 'linear-gradient(90deg, rgba(236,72,153,.12), rgba(249,115,22,.12))', border: '1px solid rgba(236,72,153,.25)' }}>
-                <span className="w-1 h-1 rounded-full animate-pulse" style={{ background: '#ec4899' }} />
-                <span style={{ background: 'linear-gradient(90deg, #ec4899, #f97316)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Updated · v2.0</span>
-              </span>
+            <div className="flex items-center gap-2 leading-none">
+              <span className="text-[15px] sm:text-[16px] font-extrabold tracking-tight" style={{ color: C.ink }}>OrganicSMM</span>
+              <span className="hidden sm:inline-flex items-center gap-1 text-[9px] font-bold uppercase tracking-[0.14em] px-1.5 py-[3px] rounded-md"
+                style={{ background: C.peach, color: C.orangeDeep }}>v2.0</span>
             </div>
           </Link>
-          <div className="hidden md:flex items-center gap-6 lg:gap-8">
-            <a href="#features" className="text-[13.5px] font-medium hover:text-pink-500 transition-colors" style={{ color: '#666' }}>Features</a>
-            <a href="#how-it-works" className="text-[13.5px] font-medium hover:text-pink-500 transition-colors" style={{ color: '#666' }}>How It Works</a>
-            <a href="#comparison" className="text-[13.5px] font-medium hover:text-pink-500 transition-colors" style={{ color: '#666' }}>Why Us</a>
+          <div className="hidden md:flex items-center gap-7">
+            {['Features', 'How it works', 'Why us'].map((t, i) => (
+              <a key={t} href={['#features', '#how-it-works', '#comparison'][i]}
+                className="text-[13px] font-medium transition-colors hover:opacity-100" style={{ color: C.ink2 }}>
+                {t}
+              </a>
+            ))}
           </div>
-          <Link to="/auth" className="h-9 sm:h-10 px-4 sm:px-6 rounded-full text-[12px] sm:text-[13px] font-bold text-white flex items-center gap-1.5 flex-shrink-0" style={{ background: 'linear-gradient(135deg, #ec4899, #db2777)', boxShadow: '0 4px 14px rgba(236,72,153,.3)' }}>
-            Get Started <ArrowRight className="w-3.5 h-3.5" />
-          </Link>
+          <div className="flex items-center gap-2">
+            <Link to="/auth" className="hidden sm:inline-flex h-9 px-3.5 items-center text-[13px] font-semibold rounded-xl transition-colors"
+              style={{ color: C.ink2 }}>
+              Sign in
+            </Link>
+            <Link to="/auth" className="h-9 sm:h-10 px-4 sm:px-5 rounded-xl text-[12.5px] sm:text-[13px] font-semibold text-white inline-flex items-center gap-1.5"
+              style={{ background: C.ink, boxShadow: C.soft }}>
+              Get Started <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
         </div>
       </nav>
 
       {/* ═══ HERO ═══ */}
-      <section className="pt-12 sm:pt-16 lg:pt-24 pb-10 text-center px-4 sm:px-6 lg:px-8">
+      <section className="pt-14 sm:pt-20 lg:pt-28 pb-12 sm:pb-16 text-center px-4 sm:px-6 lg:px-8">
         <div className="max-w-3xl mx-auto">
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3 mb-6 sm:mb-8">
-            {/* Updated Version Badge */}
-            <div className="inline-flex items-center gap-2 px-4 sm:px-5 py-2 rounded-full" style={{ background: 'linear-gradient(135deg, rgba(236,72,153,.1), rgba(219,39,119,.06))', border: '1px solid rgba(236,72,153,.18)', boxShadow: '0 2px 12px rgba(236,72,153,.08)' }}>
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style={{ background: '#ec4899' }}></span>
-                <span className="relative inline-flex rounded-full h-2 w-2" style={{ background: '#ec4899' }}></span>
+          <div className="inline-flex items-center gap-2 mb-6">
+            <Pill>
+              <span className="relative flex h-1.5 w-1.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style={{ background: C.orange }} />
+                <span className="relative inline-flex rounded-full h-1.5 w-1.5" style={{ background: C.orange }} />
               </span>
-              <span className="text-[10px] sm:text-[11.5px] font-bold uppercase tracking-widest" style={{ color: '#db2777' }}>v2.0 Updated</span>
-              <span className="text-[9px] sm:text-[10px] px-2 py-0.5 rounded-full font-semibold" style={{ background: 'rgba(236,72,153,.12)', color: '#be185d' }}>NEW</span>
-            </div>
-
-            {/* AI Badge */}
-            <div className="inline-flex items-center gap-2 px-4 sm:px-5 py-2 rounded-full" style={{ background: 'rgba(236,72,153,.08)', border: '1px solid rgba(236,72,153,.15)' }}>
-              <Zap className="w-3.5 h-3.5 sm:w-4 sm:h-4" style={{ color: '#ec4899' }} />
-              <span className="text-[11px] sm:text-[13px] font-semibold" style={{ color: '#be185d' }}>World's First AI-Organic Panel</span>
-            </div>
+              v2.0 — World's first AI-organic panel
+            </Pill>
           </div>
 
-          <h1 className="text-4xl sm:text-5xl lg:text-[4.2rem] font-black leading-[1.08] tracking-[-0.03em] mb-5 sm:mb-6" style={{ color: '#1a1a2e', fontFamily: "'Outfit', 'Inter', system-ui, sans-serif" }}>
-            Organic Growth{' '}
-            <br className="hidden sm:block" />
-            Made <span style={{ color: '#ec4899' }}>Simple</span>
+          <h1 className="text-[2.4rem] sm:text-5xl lg:text-[4.5rem] font-black leading-[1.04] tracking-[-0.035em] mb-5"
+            style={{ color: C.ink, fontFamily: "'Outfit', 'Inter', system-ui, sans-serif" }}>
+            Organic growth,<br className="hidden sm:block" />
+            <span className="relative inline-block">
+              <span style={{ background: `linear-gradient(135deg, ${C.orange}, #FF9A4D)`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                made beautifully simple.
+              </span>
+              <svg className="absolute -bottom-2 left-0 w-full" height="10" viewBox="0 0 300 10" preserveAspectRatio="none">
+                <path d="M2 6 Q 80 1, 160 5 T 298 5" stroke={C.orange} strokeWidth="3" fill="none" strokeLinecap="round" opacity="0.45" />
+              </svg>
+            </span>
           </h1>
 
-          <p className="text-[15px] sm:text-[17px] leading-[1.7] mb-8 sm:mb-10 max-w-lg mx-auto px-2" style={{ color: '#888' }}>
-            Revolutionary organic social media growth with natural delivery patterns. 100% <strong style={{ color: '#555' }}>safe</strong> for your accounts.
+          <p className="text-[15px] sm:text-[17.5px] leading-[1.65] mb-9 max-w-xl mx-auto" style={{ color: C.ink2 }}>
+            Natural delivery patterns that look, feel and behave like real people.
+            100% safe for your accounts — zero bans, ever.
           </p>
 
-          {/* CTA */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-7 sm:mb-8">
-            <Link to="/auth" className="w-full sm:w-auto h-12 sm:h-13 px-8 py-3 sm:py-3.5 rounded-full text-[14px] sm:text-[15px] font-bold text-white flex items-center justify-center gap-2" style={{ background: 'linear-gradient(135deg, #ec4899, #db2777)', boxShadow: '0 8px 28px rgba(236,72,153,.35)' }}>
-              <Zap className="w-4 h-4" /> Start Growing <ArrowRight className="w-4 h-4" />
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-8">
+            <Link to="/auth" className="w-full sm:w-auto h-12 px-7 rounded-xl text-[14.5px] font-semibold text-white flex items-center justify-center gap-2 transition-transform hover:-translate-y-0.5"
+              style={{ background: `linear-gradient(135deg, ${C.orange}, ${C.orangeDeep})`, boxShadow: '0 10px 30px rgba(255,106,26,.35)' }}>
+              <Sparkles className="w-4 h-4" /> Start growing free
             </Link>
-            <Link to="/auth" className="w-full sm:w-auto h-12 sm:h-13 px-8 py-3 sm:py-3.5 rounded-full text-[14px] sm:text-[15px] font-semibold flex items-center justify-center gap-2" style={{ color: '#444', border: '1px solid rgba(0,0,0,.12)', background: 'white' }}>
-              View Services <ChevronRight className="w-4 h-4" />
+            <Link to="/auth" className="w-full sm:w-auto h-12 px-7 rounded-xl text-[14.5px] font-semibold flex items-center justify-center gap-2 transition-colors"
+              style={{ color: C.ink, background: C.card, border: `1px solid ${C.line}`, boxShadow: C.soft }}>
+              View services <ChevronRight className="w-4 h-4" />
             </Link>
           </div>
 
-          {/* Trust badges */}
-          <div className="flex items-center justify-center gap-3 sm:gap-5 flex-wrap text-[11px] sm:text-[12.5px] font-medium" style={{ color: '#999' }}>
-            <span className="flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5" style={{ color: '#10b981' }} /> No credit card required</span>
-            <span className="hidden sm:inline" style={{ color: '#ddd' }}>·</span>
-            <span className="flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5" style={{ color: '#10b981' }} /> All features included</span>
-            <span className="hidden sm:inline" style={{ color: '#ddd' }}>·</span>
-            <span className="flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5" style={{ color: '#10b981' }} /> Instant setup</span>
+          <div className="flex items-center justify-center gap-x-5 gap-y-2 flex-wrap text-[12px] sm:text-[13px] font-medium" style={{ color: C.muted }}>
+            {['No credit card', 'All features included', 'Setup in seconds'].map((t) => (
+              <span key={t} className="flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5" style={{ color: '#10b981' }} /> {t}</span>
+            ))}
+          </div>
+
+          {/* social proof bar */}
+          <div className="mt-12 flex items-center justify-center gap-6 sm:gap-10 flex-wrap">
+            <div className="flex items-center gap-1.5">
+              {[1,2,3,4,5].map(i => <Star key={i} className="w-4 h-4 fill-current" style={{ color: '#FFB400' }} />)}
+              <span className="text-[12.5px] font-semibold ml-1" style={{ color: C.ink }}>4.9/5</span>
+              <span className="text-[12px]" style={{ color: C.muted }}>· 2,400+ creators</span>
+            </div>
+            <span className="hidden sm:inline-block w-px h-5" style={{ background: C.line }} />
+            <span className="text-[12.5px] font-medium" style={{ color: C.ink2 }}>
+              <strong style={{ color: C.ink }}>50,000+</strong> orders delivered
+            </span>
           </div>
         </div>
       </section>
 
-      {/* ═══ UNIQUE FEATURES (small cards row) ═══ */}
-      <section id="features" className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-8 sm:mb-10">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-4" style={{ background: 'rgba(236,72,153,.08)', border: '1px solid rgba(236,72,153,.12)' }}>
-              <Zap className="w-3.5 h-3.5" style={{ color: '#ec4899' }} />
-              <span className="text-[10px] sm:text-[11.5px] font-bold uppercase tracking-widest" style={{ color: '#db2777' }}>World's First AI-Organic Panel</span>
-            </div>
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight" style={{ color: '#1a1a2e', fontFamily: "'Outfit', system-ui" }}>
-              Features <span style={{ color: '#ec4899' }}>No Other Panel Has</span>
+      {/* ═══ FEATURES ROW ═══ */}
+      <section id="features" className="py-12 sm:py-20 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-10">
+            <Pill><Zap className="w-3 h-3" /> Features no other panel has</Pill>
+            <h2 className="mt-4 text-[1.75rem] sm:text-4xl lg:text-[2.75rem] font-extrabold tracking-tight"
+              style={{ color: C.ink, fontFamily: "'Outfit', system-ui" }}>
+              Engineered to look <span style={{ color: C.orange }}>perfectly natural</span>
             </h2>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
             {[
-              { icon: TrendingUp, title: 'S-Curve Pattern', desc: 'Natural viral growth simulation', border: '#ec4899' },
-              { icon: Shuffle, title: '±50% Variance', desc: 'Random qty each delivery', border: '#f59e0b' },
-              { icon: Clock, title: 'Peak Hour Boost', desc: '1.5x during 6-10PM IST', border: '#3b82f6' },
-              { icon: Moon, title: 'Night Slowdown', desc: 'Realistic sleep patterns', border: '#10b981' },
-              { icon: Timer, title: '±5min Jitter', desc: 'Anti-detection timing', border: '#8b5cf6' },
-              { icon: Eye, title: 'Live Preview', desc: 'See delivery before order', border: '#06b6d4' },
+              { icon: TrendingUp, title: 'S-Curve Pattern', desc: 'Natural viral growth simulation' },
+              { icon: Shuffle, title: '±50% Variance', desc: 'Random qty each delivery' },
+              { icon: Clock, title: 'Peak Hour Boost', desc: '1.5x during 6–10 PM IST' },
+              { icon: Moon, title: 'Night Slowdown', desc: 'Realistic sleep patterns' },
+              { icon: Timer, title: '±5min Jitter', desc: 'Anti-detection timing' },
+              { icon: Eye, title: 'Live Preview', desc: 'See delivery before order' },
             ].map((f) => (
-              <div key={f.title} className="rounded-2xl p-4 sm:p-5 text-center transition-all hover:-translate-y-1" style={{ background: 'white', border: '1px solid rgba(0,0,0,.06)', borderTop: `3px solid ${f.border}`, boxShadow: '0 4px 20px rgba(0,0,0,.03)' }}>
-                <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center mx-auto mb-2.5 sm:mb-3" style={{ background: '#f5f5f5' }}>
-                  <f.icon className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: '#333' }} />
+              <div key={f.title} className="group rounded-2xl p-4 sm:p-5 text-center transition-all hover:-translate-y-1"
+                style={{ background: C.card, border: `1px solid ${C.line}`, boxShadow: C.soft }}>
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-2.5 transition-colors group-hover:scale-105"
+                  style={{ background: C.peach }}>
+                  <f.icon className="w-4.5 h-4.5" style={{ color: C.orangeDeep, width: 18, height: 18 }} />
                 </div>
-                <h3 className="text-[12px] sm:text-[13px] font-bold mb-1" style={{ color: '#1a1a2e' }}>{f.title}</h3>
-                <p className="text-[10px] sm:text-[11px] leading-relaxed" style={{ color: '#999' }}>{f.desc}</p>
+                <h3 className="text-[12.5px] font-bold mb-1" style={{ color: C.ink }}>{f.title}</h3>
+                <p className="text-[10.5px] leading-relaxed" style={{ color: C.muted }}>{f.desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ═══ COMPARISON TABLE ═══ */}
-      <section id="comparison" className="py-10 sm:py-12 lg:py-16 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto rounded-2xl overflow-hidden" style={{ background: 'white', border: '1px solid rgba(0,0,0,.06)', borderTop: '3px solid', borderImage: 'linear-gradient(90deg, #ec4899, #f59e0b, #10b981, #3b82f6) 1', boxShadow: '0 4px 24px rgba(0,0,0,.04)' }}>
-          <div className="grid md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-gray-100">
-            {/* Regular panels */}
-            <div className="p-5 sm:p-8">
-              <div className="flex items-center gap-2.5 mb-4 sm:mb-5">
-                <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: '#f5f5f5' }}>
-                  <X className="w-4 h-4" style={{ color: '#999' }} />
+      {/* ═══ COMPARISON ═══ */}
+      <section id="comparison" className="py-10 sm:py-16 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-5xl mx-auto rounded-3xl overflow-hidden"
+          style={{ background: C.card, border: `1px solid ${C.line}`, boxShadow: C.softLg }}>
+          <div className="grid md:grid-cols-2">
+            {/* Regular */}
+            <div className="p-6 sm:p-9">
+              <div className="flex items-center gap-2.5 mb-5">
+                <div className="w-9 h-9 rounded-full flex items-center justify-center" style={{ background: '#F4F4F0' }}>
+                  <span className="text-[16px]" style={{ color: C.muted }}>×</span>
                 </div>
-                <span className="text-[14px] sm:text-[15px] font-bold" style={{ color: '#1a1a2e' }}>Regular SMM Panels</span>
+                <span className="text-[15px] font-bold" style={{ color: C.ink }}>Regular SMM Panels</span>
               </div>
-              <div className="space-y-2.5 sm:space-y-3">
+              <div className="space-y-3">
                 {[
-                  'Same quantity every batch = Easy detection',
-                  'Fixed intervals = Bot pattern visible',
-                  '24/7 delivery = Unnatural behavior',
+                  'Same quantity every batch — easy to detect',
+                  'Fixed intervals — bot pattern visible',
+                  '24/7 delivery — unnatural behavior',
                   'Accounts get flagged & banned',
                 ].map((t) => (
                   <div key={t} className="flex items-start gap-2.5">
-                    <div className="w-1.5 h-1.5 rounded-full mt-2 flex-shrink-0" style={{ background: '#ef4444' }} />
-                    <span className="text-[12px] sm:text-[13px] leading-relaxed" style={{ color: '#666' }}>{t}</span>
+                    <div className="w-1.5 h-1.5 rounded-full mt-2 flex-shrink-0" style={{ background: '#EF4444' }} />
+                    <span className="text-[13px] leading-relaxed" style={{ color: C.ink2 }}>{t}</span>
                   </div>
                 ))}
               </div>
             </div>
-            {/* OrganicSMM */}
-            <div className="p-5 sm:p-8" style={{ background: '#fefce8' }}>
-              <div className="flex items-center gap-2.5 mb-4 sm:mb-5">
-                <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: '#dcfce7' }}>
-                  <Check className="w-4 h-4" style={{ color: '#16a34a' }} />
+            {/* Us */}
+            <div className="p-6 sm:p-9 relative" style={{ background: 'linear-gradient(180deg, #FFF8F1, #FFFFFF)' }}>
+              <span className="absolute top-5 right-5 text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-md"
+                style={{ background: C.orange, color: 'white' }}>This panel</span>
+              <div className="flex items-center gap-2.5 mb-5">
+                <div className="w-9 h-9 rounded-full flex items-center justify-center" style={{ background: '#DCFCE7' }}>
+                  <CheckCircle2 className="w-4.5 h-4.5" style={{ color: '#16A34A', width: 18, height: 18 }} />
                 </div>
-                <span className="text-[14px] sm:text-[15px] font-bold" style={{ color: '#1a1a2e' }}>OrganicSMM (This Panel)</span>
+                <span className="text-[15px] font-bold" style={{ color: C.ink }}>OrganicSMM</span>
               </div>
-              <div className="space-y-2.5 sm:space-y-3">
+              <div className="space-y-3">
                 {[
-                  'Random variance = Looks like real users',
-                  'Jittered timing = Undetectable patterns',
-                  'Peak hours + night slow = Human behavior',
+                  'Random variance — looks like real users',
+                  'Jittered timing — undetectable patterns',
+                  'Peak hours + night slow — human behavior',
                   '100% safe, zero bans reported',
                 ].map((t) => (
                   <div key={t} className="flex items-start gap-2.5">
-                    <div className="w-1.5 h-1.5 rounded-full mt-2 flex-shrink-0" style={{ background: '#16a34a' }} />
-                    <span className="text-[12px] sm:text-[13px] leading-relaxed" style={{ color: '#666' }}>{t}</span>
+                    <div className="w-1.5 h-1.5 rounded-full mt-2 flex-shrink-0" style={{ background: '#16A34A' }} />
+                    <span className="text-[13px] leading-relaxed" style={{ color: C.ink2 }}>{t}</span>
                   </div>
                 ))}
               </div>
             </div>
           </div>
-          {/* Stats bar */}
-          <div className="flex items-center justify-center gap-4 sm:gap-8 flex-wrap py-4 sm:py-5 px-4 sm:px-6" style={{ borderTop: '1px solid rgba(0,0,0,.06)', background: '#fafafa' }}>
+          <div className="flex items-center justify-center gap-6 sm:gap-10 flex-wrap py-5 px-6"
+            style={{ borderTop: `1px solid ${C.line}`, background: '#FAFAF7' }}>
             {[
               { icon: '🏆', text: '50,000+ Orders Delivered' },
               { icon: '🛡️', text: 'Zero Account Bans' },
               { icon: '⚡', text: '99.9% Success Rate' },
             ].map((s) => (
-              <span key={s.text} className="flex items-center gap-2 text-[11px] sm:text-[13px] font-semibold" style={{ color: '#555' }}>
+              <span key={s.text} className="flex items-center gap-2 text-[12.5px] font-semibold" style={{ color: C.ink2 }}>
                 <span>{s.icon}</span> {s.text}
               </span>
             ))}
@@ -196,31 +244,34 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ═══ FEATURES GRID (larger cards) ═══ */}
-      <section id="how-it-works" className="py-14 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-10 sm:mb-12">
-            <p className="text-[10px] sm:text-[11px] font-bold uppercase tracking-widest mb-2" style={{ color: '#999' }}>Why Choose Us</p>
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight" style={{ color: '#1a1a2e', fontFamily: "'Outfit', system-ui" }}>
-              Built for <span style={{ color: '#ec4899' }}>Real Growth</span>
+      {/* ═══ HOW IT WORKS / WHY ═══ */}
+      <section id="how-it-works" className="py-14 sm:py-24 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <Pill>Why choose us</Pill>
+            <h2 className="mt-4 text-[1.75rem] sm:text-4xl lg:text-[2.75rem] font-extrabold tracking-tight"
+              style={{ color: C.ink, fontFamily: "'Outfit', system-ui" }}>
+              Built for <span style={{ color: C.orange }}>real growth</span>
             </h2>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
             {[
-              { icon: TrendingUp, title: 'Natural Growth Curves', desc: 'Variable delivery quantities that perfectly mimic real organic engagement patterns.', border: '#ec4899' },
-              { icon: Zap, title: 'Peak Hour Optimization', desc: 'Higher delivery during active hours (6PM-10PM) for realistic engagement timing.', border: '#f59e0b' },
-              { icon: Shield, title: 'Account Safety', desc: 'Randomized patterns prevent detection and keep your accounts 100% secure.', border: '#10b981' },
-              { icon: BarChart3, title: 'Live Preview', desc: 'See exactly when and how much will be delivered before placing your order.', border: '#3b82f6' },
-              { icon: CheckCircle2, title: 'Premium Quality', desc: 'High-quality engagement from real-looking accounts with complete profiles.', border: '#8b5cf6' },
-              { icon: Shuffle, title: 'Organic Variance', desc: '±25% random variance on each delivery for unpredictable, natural growth.', border: '#06b6d4' },
+              { icon: TrendingUp, title: 'Natural growth curves', desc: 'Variable delivery quantities that perfectly mimic real organic engagement patterns.' },
+              { icon: Zap, title: 'Peak hour optimization', desc: 'Higher delivery during active hours (6 PM – 10 PM) for realistic engagement timing.' },
+              { icon: Shield, title: 'Account safety', desc: 'Randomized patterns prevent detection and keep your accounts 100% secure.' },
+              { icon: BarChart3, title: 'Live preview', desc: 'See exactly when and how much will be delivered before placing your order.' },
+              { icon: CheckCircle2, title: 'Premium quality', desc: 'High-quality engagement from real-looking accounts with complete profiles.' },
+              { icon: Shuffle, title: 'Organic variance', desc: '±25% random variance on each delivery for unpredictable, natural growth.' },
             ].map((f) => (
-              <div key={f.title} className="rounded-2xl p-6 sm:p-7 transition-all hover:-translate-y-1" style={{ background: 'white', border: '1px solid rgba(0,0,0,.06)', borderTop: `3px solid ${f.border}`, boxShadow: '0 4px 20px rgba(0,0,0,.03)' }}>
-                <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-4 sm:mb-5" style={{ background: '#f5f5f5' }}>
-                  <f.icon className="w-5 h-5" style={{ color: '#333' }} />
+              <div key={f.title} className="group rounded-2xl p-6 sm:p-7 transition-all hover:-translate-y-1"
+                style={{ background: C.card, border: `1px solid ${C.line}`, boxShadow: C.soft }}>
+                <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-4 transition-transform group-hover:scale-105"
+                  style={{ background: C.peach }}>
+                  <f.icon className="w-5 h-5" style={{ color: C.orangeDeep }} />
                 </div>
-                <h3 className="text-[14px] sm:text-[15px] font-bold mb-2" style={{ color: '#1a1a2e' }}>{f.title}</h3>
-                <p className="text-[12px] sm:text-[13px] leading-relaxed" style={{ color: '#888' }}>{f.desc}</p>
+                <h3 className="text-[15px] font-bold mb-2" style={{ color: C.ink }}>{f.title}</h3>
+                <p className="text-[13px] leading-relaxed" style={{ color: C.ink2 }}>{f.desc}</p>
               </div>
             ))}
           </div>
@@ -228,45 +279,57 @@ const Index = () => {
       </section>
 
       {/* ═══ CTA ═══ */}
-      <section className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto rounded-3xl text-center py-12 sm:py-16 px-6 sm:px-8" style={{ background: 'white', border: '1px solid rgba(0,0,0,.06)', borderTop: '3px solid', borderImage: 'linear-gradient(90deg, #ec4899, #f59e0b, #10b981) 1', boxShadow: '0 8px 32px rgba(0,0,0,.04)' }}>
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight mb-4" style={{ color: '#1a1a2e', fontFamily: "'Outfit', system-ui" }}>
-            Ready to Grow <span style={{ color: '#ec4899' }}>Organically</span>?
-          </h2>
-          <p className="text-[14px] sm:text-[15px] mb-6 sm:mb-8 max-w-md mx-auto" style={{ color: '#888' }}>
-            Join thousands of creators and businesses using our organic delivery system. No credit card required to start.
-          </p>
-          <Link to="/auth" className="inline-flex h-12 sm:h-13 px-8 py-3.5 rounded-full text-[14px] sm:text-[15px] font-bold text-white items-center gap-2" style={{ background: 'linear-gradient(135deg, #ec4899, #db2777)', boxShadow: '0 8px 28px rgba(236,72,153,.35)' }}>
-            Create Free Account <ArrowRight className="w-4 h-4" />
-          </Link>
+      <section className="py-12 sm:py-20 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto rounded-[28px] text-center py-14 sm:py-20 px-6 sm:px-10 relative overflow-hidden"
+          style={{ background: `linear-gradient(135deg, ${C.ink} 0%, #1A1A28 100%)`, boxShadow: C.softLg }}>
+          {/* glow */}
+          <div aria-hidden className="absolute -top-32 -right-32 w-[400px] h-[400px] rounded-full"
+            style={{ background: `radial-gradient(closest-side, rgba(255,106,26,.4), transparent 70%)`, filter: 'blur(20px)' }} />
+          <div aria-hidden className="absolute -bottom-32 -left-32 w-[400px] h-[400px] rounded-full"
+            style={{ background: `radial-gradient(closest-side, rgba(255,180,120,.25), transparent 70%)`, filter: 'blur(20px)' }} />
+
+          <div className="relative">
+            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-widest mb-5"
+              style={{ background: 'rgba(255,255,255,.1)', color: '#FFB37A', border: '1px solid rgba(255,180,120,.2)' }}>
+              <Sparkles className="w-3 h-3" /> Free to start
+            </span>
+            <h2 className="text-[1.85rem] sm:text-4xl lg:text-[2.75rem] font-extrabold tracking-tight mb-4 text-white"
+              style={{ fontFamily: "'Outfit', system-ui" }}>
+              Ready to grow <span style={{ background: `linear-gradient(135deg, ${C.orange}, #FFB37A)`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>organically</span>?
+            </h2>
+            <p className="text-[14.5px] sm:text-[16px] mb-8 max-w-md mx-auto" style={{ color: 'rgba(255,255,255,.7)' }}>
+              Join thousands of creators using our organic delivery system. No credit card required.
+            </p>
+            <Link to="/auth" className="inline-flex h-12 sm:h-13 px-8 rounded-xl text-[14.5px] font-bold items-center gap-2 transition-transform hover:-translate-y-0.5"
+              style={{ background: 'white', color: C.ink, boxShadow: '0 10px 30px rgba(0,0,0,.25)' }}>
+              Create free account <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
         </div>
       </section>
 
       {/* ═══ FOOTER ═══ */}
-      <footer className="py-10 sm:py-12 px-4 sm:px-6 lg:px-8" style={{ background: '#f9fafb', borderTop: '1px solid rgba(0,0,0,.06)' }}>
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10 mb-8 sm:mb-10">
-            {/* Brand */}
+      <footer className="py-12 px-4 sm:px-6 lg:px-8" style={{ background: C.bg, borderTop: `1px solid ${C.line}` }}>
+        <div className="max-w-6xl mx-auto">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 mb-10">
             <div className="col-span-2 sm:col-span-1">
               <div className="flex items-center gap-2.5 mb-4">
-                <img src={logo} alt="" className="w-9 h-9 rounded-xl object-cover" />
-                <span className="text-[15px] font-bold" style={{ color: '#1a1a2e' }}>OrganicSMM</span>
+                <img src={logo} alt="" className="w-9 h-9 rounded-xl object-cover" style={{ border: `1px solid ${C.line}` }} />
+                <span className="text-[15px] font-bold" style={{ color: C.ink }}>OrganicSMM</span>
               </div>
-              <p className="text-[13px] leading-relaxed" style={{ color: '#999' }}>
+              <p className="text-[13px] leading-relaxed" style={{ color: C.muted }}>
                 Revolutionary organic social media growth platform with natural delivery patterns.
               </p>
             </div>
-            {/* Quick Links */}
             <div>
-              <h4 className="text-[13px] font-bold mb-3 sm:mb-4" style={{ color: '#1a1a2e' }}>Quick Links</h4>
+              <h4 className="text-[12px] font-bold uppercase tracking-wider mb-4" style={{ color: C.ink }}>Quick Links</h4>
               <div className="space-y-2.5">
-                <Link to="/auth" className="block text-[13px] hover:underline" style={{ color: '#ec4899' }}>Get Started</Link>
-                <Link to="/services" className="block text-[13px] hover:underline" style={{ color: '#ec4899' }}>Services</Link>
+                <Link to="/auth" className="block text-[13px] hover:text-orange-500 transition-colors" style={{ color: C.ink2 }}>Get Started</Link>
+                <Link to="/services" className="block text-[13px] hover:text-orange-500 transition-colors" style={{ color: C.ink2 }}>Services</Link>
               </div>
             </div>
-            {/* Legal */}
             <div>
-              <h4 className="text-[13px] font-bold mb-3 sm:mb-4" style={{ color: '#1a1a2e' }}>Legal</h4>
+              <h4 className="text-[12px] font-bold uppercase tracking-wider mb-4" style={{ color: C.ink }}>Legal</h4>
               <div className="space-y-2.5">
                 {[
                   { to: '/terms', icon: FileText, label: 'Terms of Service' },
@@ -274,15 +337,14 @@ const Index = () => {
                   { to: '/refund', icon: FileText, label: 'Refund Policy' },
                   { to: '/cookies', icon: FileText, label: 'Cookie Policy' },
                 ].map((l) => (
-                  <Link key={l.to} to={l.to} className="flex items-center gap-1.5 text-[12px] sm:text-[13px] hover:underline" style={{ color: '#888' }}>
+                  <Link key={l.to} to={l.to} className="flex items-center gap-1.5 text-[13px] hover:text-orange-500 transition-colors" style={{ color: C.ink2 }}>
                     <l.icon className="w-3 h-3 flex-shrink-0" /> {l.label}
                   </Link>
                 ))}
               </div>
             </div>
-            {/* Support */}
             <div>
-              <h4 className="text-[13px] font-bold mb-3 sm:mb-4" style={{ color: '#1a1a2e' }}>Support</h4>
+              <h4 className="text-[12px] font-bold uppercase tracking-wider mb-4" style={{ color: C.ink }}>Support</h4>
               <div className="space-y-2.5">
                 {[
                   { icon: HelpCircle, label: 'Help Center' },
@@ -290,7 +352,7 @@ const Index = () => {
                   { icon: Code2, label: 'API Documentation' },
                   { icon: Activity, label: 'Status Page' },
                 ].map((l) => (
-                  <span key={l.label} className="flex items-center gap-1.5 text-[12px] sm:text-[13px]" style={{ color: '#888' }}>
+                  <span key={l.label} className="flex items-center gap-1.5 text-[13px]" style={{ color: C.ink2 }}>
                     <l.icon className="w-3 h-3 flex-shrink-0" /> {l.label}
                   </span>
                 ))}
@@ -298,11 +360,11 @@ const Index = () => {
             </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6" style={{ borderTop: '1px solid rgba(0,0,0,.06)' }}>
-            <p className="text-[12px]" style={{ color: '#bbb' }}>© {new Date().getFullYear()} OrganicSMM. All rights reserved.</p>
-            <div className="flex items-center gap-5 text-[12px] font-medium" style={{ color: '#999' }}>
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6" style={{ borderTop: `1px solid ${C.line}` }}>
+            <p className="text-[12px]" style={{ color: C.muted }}>© {new Date().getFullYear()} OrganicSMM. All rights reserved.</p>
+            <div className="flex items-center gap-5 text-[12px] font-medium" style={{ color: C.muted }}>
               <span className="flex items-center gap-1"><Shield className="w-3 h-3" style={{ color: '#10b981' }} /> SSL Secured</span>
-              <span className="flex items-center gap-1"><Zap className="w-3 h-3" style={{ color: '#f59e0b' }} /> 99.9% Uptime</span>
+              <span className="flex items-center gap-1"><Zap className="w-3 h-3" style={{ color: C.orange }} /> 99.9% Uptime</span>
             </div>
           </div>
         </div>
