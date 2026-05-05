@@ -324,8 +324,8 @@ const Index = () => {
             <div>
               <h4 className="text-[12px] font-bold uppercase tracking-wider mb-4" style={{ color: C.ink }}>Quick Links</h4>
               <div className="space-y-2.5">
-                <Link to="/auth" className="block text-[13px] hover:text-orange-500 transition-colors" style={{ color: C.ink2 }}>Get Started</Link>
-                <Link to="/services" className="block text-[13px] hover:text-orange-500 transition-colors" style={{ color: C.ink2 }}>Services</Link>
+                <Link to="/auth" className="block text-[13px] hover:text-green-600 transition-colors" style={{ color: C.ink2 }}>Get Started</Link>
+                <Link to="/services" className="block text-[13px] hover:text-green-600 transition-colors" style={{ color: C.ink2 }}>Services</Link>
               </div>
             </div>
             <div>
@@ -337,7 +337,7 @@ const Index = () => {
                   { to: '/refund', icon: FileText, label: 'Refund Policy' },
                   { to: '/cookies', icon: FileText, label: 'Cookie Policy' },
                 ].map((l) => (
-                  <Link key={l.to} to={l.to} className="flex items-center gap-1.5 text-[13px] hover:text-orange-500 transition-colors" style={{ color: C.ink2 }}>
+                  <Link key={l.to} to={l.to} className="flex items-center gap-1.5 text-[13px] hover:text-green-600 transition-colors" style={{ color: C.ink2 }}>
                     <l.icon className="w-3 h-3 flex-shrink-0" /> {l.label}
                   </Link>
                 ))}
