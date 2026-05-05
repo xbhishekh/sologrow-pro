@@ -67,9 +67,9 @@ const supabaseModule = createClient(
 // Avoids repeated DB queries for same service
 // ==========================================
 class MappingCache {
-  private cache = new Map<string, { account: ProviderAccount; providerServiceId: string }[]>()
+  private cache = new Map<string, { account: ProviderAccount; providerServiceId: string; minQuantity: number }[]>()
   
-  async getForService(supabase: any, serviceId: string, excludeIds: string[], executionId: string): Promise<{ account: ProviderAccount; providerServiceId: string }[]> {
+  async getForService(supabase: any, serviceId: string, excludeIds: string[], executionId: string): Promise<{ account: ProviderAccount; providerServiceId: string; minQuantity: number }[]> {
     // Fetch once per service per invocation
     if (!this.cache.has(serviceId)) {
       const { data: mappings, error } = await supabase
@@ -91,11 +91,15 @@ class MappingCache {
           return aTime - bTime
         })
         
-        const accounts: { account: ProviderAccount; providerServiceId: string }[] = []
+        const accounts: { account: ProviderAccount; providerServiceId: string; minQuantity: number }[] = []
         for (const mapping of sorted) {
           const account = mapping.provider_account as ProviderAccount
           if (account && account.is_active && isValidHttpUrl(account.api_url)) {
-            accounts.push({ account, providerServiceId: mapping.provider_service_id })
+            accounts.push({
+              account,
+              providerServiceId: mapping.provider_service_id,
+              minQuantity: Number((mapping as any).min_quantity || 0),
+            })
           } else if (account && account.is_active && !isValidHttpUrl(account.api_url)) {
             console.log(`⚠️ Skipping provider ${account.name}: invalid api_url`)
           }
