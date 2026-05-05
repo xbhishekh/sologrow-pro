@@ -647,7 +647,7 @@ export default function EngagementOrder() {
     <DashboardLayout>
       <div className="max-w-5xl mx-auto px-3 sm:px-6 lg:px-8 space-y-4 sm:space-y-6 pb-8">
         {/* Header with gradient - Compact on mobile */}
-        <div className="relative overflow-hidden rounded-2xl p-4 sm:p-6 lg:p-8" style={{ background: 'linear-gradient(135deg, #831843, #be185d, #ec4899)', boxShadow: '0 8px 32px rgba(190,24,93,.25)' }}>
+        <div className="relative overflow-hidden rounded-2xl p-4 sm:p-6 lg:p-8" style={{ background: 'linear-gradient(135deg, #831843, #166534, #16a34a)', boxShadow: '0 8px 32px rgba(190,24,93,.25)' }}>
           <div className="relative z-10 text-center">
             <div className="inline-flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
               <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl flex items-center justify-center" style={{ background: 'rgba(255,255,255,.2)', backdropFilter: 'blur(8px)' }}>

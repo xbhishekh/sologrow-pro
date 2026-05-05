@@ -37,7 +37,7 @@ export function Sidebar({ onClose }: SidebarProps) {
           <img src={logo} alt="OrganicSMM" className="w-9 h-9 rounded-xl object-cover shadow-sm" />
           <div className="flex flex-col">
             <span className="text-[15px] font-bold tracking-tight leading-tight" style={{ color: '#1a1a2e' }}>OrganicSMM</span>
-            <span className="text-[9px] font-semibold uppercase tracking-[0.15em] leading-tight" style={{ background: 'linear-gradient(90deg, #ec4899, #f97316)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>✦ Updated Version</span>
+            <span className="text-[9px] font-semibold uppercase tracking-[0.15em] leading-tight" style={{ background: 'linear-gradient(90deg, #16a34a, #f97316)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>✦ Updated Version</span>
           </div>
         </Link>
         <button onClick={onClose} className="lg:hidden w-8 h-8 flex items-center justify-center rounded-lg" style={{ color: '#ccc' }}>
@@ -47,8 +47,8 @@ export function Sidebar({ onClose }: SidebarProps) {
 
       {/* User info */}
       {profile && (
-        <div className="mx-4 mb-3 flex items-center gap-2.5 px-3 py-2.5 rounded-xl" style={{ background: '#fdf2f8', border: '1px solid #fce7f3' }}>
-          <div className="w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-bold text-white shrink-0" style={{ background: '#ec4899' }}>
+        <div className="mx-4 mb-3 flex items-center gap-2.5 px-3 py-2.5 rounded-xl" style={{ background: '#f0fdf4', border: '1px solid #dcfce7' }}>
+          <div className="w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-bold text-white shrink-0" style={{ background: '#16a34a' }}>
             {profile.full_name?.[0]?.toUpperCase() || 'U'}
           </div>
           <div className="min-w-0 flex-1">
@@ -60,13 +60,13 @@ export function Sidebar({ onClose }: SidebarProps) {
 
       {/* Wallet */}
       <div className="mx-4 mb-4">
-        <div className="rounded-xl p-4" style={{ background: 'linear-gradient(135deg, #fdf2f8, #fce7f3)', border: '1px solid #fce7f3' }}>
+        <div className="rounded-xl p-4" style={{ background: 'linear-gradient(135deg, #f0fdf4, #dcfce7)', border: '1px solid #dcfce7' }}>
           <div className="flex items-center gap-1.5 mb-1.5">
-            <Wallet className="w-3 h-3" style={{ color: '#ec4899' }} />
-            <span className="text-[9px] font-semibold uppercase tracking-wider" style={{ color: '#ec4899' }}>Wallet Balance</span>
+            <Wallet className="w-3 h-3" style={{ color: '#16a34a' }} />
+            <span className="text-[9px] font-semibold uppercase tracking-wider" style={{ color: '#16a34a' }}>Wallet Balance</span>
           </div>
           <p className="text-[22px] font-extrabold tracking-tight mb-3" style={{ color: '#1a1a2e' }}>{formatPrice(wallet?.balance || 0)}</p>
-          <Link to="/wallet" onClick={onClose} className="flex items-center justify-center gap-1.5 w-full h-8 rounded-lg text-[11px] font-semibold text-white" style={{ background: '#ec4899' }}>
+          <Link to="/wallet" onClick={onClose} className="flex items-center justify-center gap-1.5 w-full h-8 rounded-lg text-[11px] font-semibold text-white" style={{ background: '#16a34a' }}>
             <Wallet className="w-3 h-3" /> Add Funds
           </Link>
         </div>
@@ -80,18 +80,18 @@ export function Sidebar({ onClose }: SidebarProps) {
           return (
             <Link key={item.path} to={item.path} onClick={onClose}
               className={cn('flex items-center gap-2.5 px-3 py-2 rounded-xl text-[13px] font-medium mb-0.5 transition-all duration-150',
-                isActive ? 'font-semibold' : 'hover:bg-pink-50/60'
+                isActive ? 'font-semibold' : 'hover:bg-green-50/60'
               )}
               style={{
-                background: isActive ? '#fdf2f8' : 'transparent',
-                color: isActive ? '#be185d' : '#666',
-                border: isActive ? '1px solid #fce7f3' : '1px solid transparent',
+                background: isActive ? '#f0fdf4' : 'transparent',
+                color: isActive ? '#166534' : '#666',
+                border: isActive ? '1px solid #dcfce7' : '1px solid transparent',
               }}
             >
-              <item.icon className="w-4 h-4" style={{ color: isActive ? '#ec4899' : '#bbb' }} />
+              <item.icon className="w-4 h-4" style={{ color: isActive ? '#16a34a' : '#bbb' }} />
               <span className="flex-1">{item.label}</span>
               {(item as any).highlight && !isActive && (
-                <span className="text-[8px] px-1.5 py-0.5 rounded-full font-bold" style={{ background: '#fce7f3', color: '#ec4899' }}>HOT</span>
+                <span className="text-[8px] px-1.5 py-0.5 rounded-full font-bold" style={{ background: '#dcfce7', color: '#16a34a' }}>HOT</span>
               )}
             </Link>
           );
@@ -124,7 +124,7 @@ export function Sidebar({ onClose }: SidebarProps) {
       {/* Currency */}
       <div className="px-3 pb-2 relative">
         <button onClick={() => setShowCurrencyPicker(!showCurrencyPicker)}
-          className="w-full flex items-center justify-between gap-2 px-3 py-2 rounded-xl text-[12px] font-medium transition-colors hover:bg-pink-50/50" style={{ color: '#888' }}>
+          className="w-full flex items-center justify-between gap-2 px-3 py-2 rounded-xl text-[12px] font-medium transition-colors hover:bg-green-50/50" style={{ color: '#888' }}>
           <div className="flex items-center gap-2">
             <span className="text-base">{currencyInfo.flag}</span>
             <span className="uppercase tracking-wider">{currencyInfo.code}</span>
@@ -136,7 +136,7 @@ export function Sidebar({ onClose }: SidebarProps) {
             {CURRENCIES.map((c) => (
               <button key={c.code} onClick={() => { setCurrency(c.code); setShowCurrencyPicker(false); }}
                 className="w-full flex items-center gap-2.5 px-3.5 py-2 text-[12px] font-medium transition-colors"
-                style={{ background: currency === c.code ? '#fdf2f8' : 'white', color: currency === c.code ? '#ec4899' : '#666' }}>
+                style={{ background: currency === c.code ? '#f0fdf4' : 'white', color: currency === c.code ? '#16a34a' : '#666' }}>
                 <span className="text-base">{c.flag}</span>
                 <span className="flex-1 text-left">{c.code}</span>
                 <span className="text-[10px] opacity-40">{c.symbol}</span>

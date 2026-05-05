@@ -70,7 +70,7 @@ interface ChartDataPoint {
 const TYPE_COLORS: Record<VisibleType, string> = {
   views: "#60a5fa",    // Blue-400
   comments: "#34d399", // Emerald-400
-  likes: "#f472b6",    // Pink-400
+  likes: "#4ade80",    // Pink-400
   saves: "#fbbf24",    // Amber-400
   shares: "#a78bfa",   // Violet-400
 };

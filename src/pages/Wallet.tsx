@@ -28,7 +28,7 @@ export default function Wallet() {
     switch (type) {
       case 'deposit': return <ArrowDownLeft className="h-4 w-4" style={{ color: '#10b981' }} />;
       case 'order': return <ArrowUpRight className="h-4 w-4" style={{ color: '#ef4444' }} />;
-      case 'refund': return <RefreshCw className="h-4 w-4" style={{ color: '#ec4899' }} />;
+      case 'refund': return <RefreshCw className="h-4 w-4" style={{ color: '#16a34a' }} />;
       default: return <WalletIcon className="h-4 w-4" style={{ color: '#999' }} />;
     }
   };
@@ -37,7 +37,7 @@ export default function Wallet() {
     switch (type) {
       case 'deposit': return 'rgba(16,185,129,.1)';
       case 'order': return 'rgba(239,68,68,.1)';
-      case 'refund': return 'rgba(236,72,153,.1)';
+      case 'refund': return 'rgba(22, 163, 74,.1)';
       default: return 'rgba(0,0,0,.04)';
     }
   };
@@ -46,7 +46,7 @@ export default function Wallet() {
     switch (type) {
       case 'deposit': return '#10b981';
       case 'order': return '#ef4444';
-      case 'refund': return '#ec4899';
+      case 'refund': return '#16a34a';
       default: return '#1a1a2e';
     }
   };
@@ -66,7 +66,7 @@ export default function Wallet() {
         </div>
 
         {/* Balance Card */}
-        <div className="rounded-2xl p-6 md:p-8 relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #831843, #be185d, #ec4899)', boxShadow: '0 8px 32px rgba(190,24,93,.2)' }}>
+        <div className="rounded-2xl p-6 md:p-8 relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #831843, #166534, #16a34a)', boxShadow: '0 8px 32px rgba(190,24,93,.2)' }}>
           <div className="absolute top-0 right-0 w-40 h-40 rounded-full" style={{ background: 'rgba(255,255,255,.08)', filter: 'blur(40px)' }} />
           <div className="relative z-10">
             <div className="flex items-center gap-2 mb-4">
@@ -131,7 +131,7 @@ export default function Wallet() {
                   onClick={() => setFilter(f)}
                   className="px-3 py-1.5 rounded-lg text-[12px] font-medium transition-all"
                   style={{
-                    background: filter === f ? '#ec4899' : 'transparent',
+                    background: filter === f ? '#16a34a' : 'transparent',
                     color: filter === f ? 'white' : '#888',
                   }}
                 >
@@ -179,7 +179,7 @@ export default function Wallet() {
                             target="_blank"
                             rel="noopener noreferrer"
                             className="text-[11px] flex items-center gap-0.5 hover:underline"
-                            style={{ color: '#ec4899' }}
+                            style={{ color: '#16a34a' }}
                           >
                             BSCScan <ExternalLink className="h-3 w-3" />
                           </a>
@@ -203,8 +203,8 @@ export default function Wallet() {
             </div>
           ) : (
             <div className="text-center py-12">
-              <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: 'rgba(236,72,153,.08)' }}>
-                <WalletIcon className="h-6 w-6" style={{ color: '#ec4899' }} />
+              <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: 'rgba(22, 163, 74,.08)' }}>
+                <WalletIcon className="h-6 w-6" style={{ color: '#16a34a' }} />
               </div>
               <p className="font-medium text-[14px]" style={{ color: '#666' }}>No transactions yet</p>
               <p className="text-[12px] mt-1" style={{ color: '#bbb' }}>Your deposits and spending history will appear here.</p>

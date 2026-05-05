@@ -12,7 +12,7 @@ import { toast } from "sonner";
 
 const ENGAGEMENT_CONFIG: Record<string, { icon: typeof Eye; label: string; emoji: string; color: string; bg: string; border: string }> = {
   views: { icon: Eye, label: "views", emoji: "👁️", color: "text-cyan-400", bg: "bg-cyan-500/20", border: "border-cyan-500/40" },
-  likes: { icon: Heart, label: "likes", emoji: "❤️", color: "text-rose-400", bg: "bg-rose-500/20", border: "border-rose-500/40" },
+  likes: { icon: Heart, label: "likes", emoji: "❤️", color: "text-green-400", bg: "bg-green-500/20", border: "border-green-500/40" },
   comments: { icon: MessageCircle, label: "comments", emoji: "💬", color: "text-emerald-400", bg: "bg-emerald-500/20", border: "border-emerald-500/40" },
   saves: { icon: Bookmark, label: "saves", emoji: "📥", color: "text-amber-400", bg: "bg-amber-500/20", border: "border-amber-500/40" },
   shares: { icon: Share2, label: "shares", emoji: "🔄", color: "text-violet-400", bg: "bg-violet-500/20", border: "border-violet-500/40" },
@@ -276,7 +276,7 @@ export function MergedTimeline({ runs, onEditRun, nextRun, onRefresh, typeTarget
                   : isCompleted
                     ? 'bg-emerald-500/10 border border-emerald-500/30'
                     : isFailed
-                      ? 'bg-rose-500/10 border border-rose-500/30'
+                      ? 'bg-green-500/10 border border-green-500/30'
                       : 'bg-violet-500/5 border border-violet-500/20 hover:bg-violet-500/10 cursor-pointer'
                   }`}
                 onClick={() => isPending && onEditRun(run)}
@@ -286,7 +286,7 @@ export function MergedTimeline({ runs, onEditRun, nextRun, onRefresh, typeTarget
                   {/* Run Number Circle - Colorful Gradient */}
                   <div className={`flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-full font-bold text-sm sm:text-base shrink-0 ${isCompleted ? 'bg-gradient-to-br from-emerald-500 to-teal-500 text-white' :
                     isActive ? 'bg-gradient-to-br from-amber-500 to-orange-500 text-white animate-pulse' :
-                      isFailed ? 'bg-gradient-to-br from-rose-500 to-red-500 text-white' :
+                      isFailed ? 'bg-gradient-to-br from-green-500 to-red-500 text-white' :
                         'bg-gradient-to-br from-violet-500 to-purple-500 text-white'
                     }`}>
                     #{index + 1}
@@ -298,7 +298,7 @@ export function MergedTimeline({ runs, onEditRun, nextRun, onRefresh, typeTarget
                       {/* Status Badge - Colorful */}
                       <Badge className={`text-sm px-3 py-1 ${isCompleted ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40' :
                         isActive ? 'bg-amber-500/20 text-amber-400 border border-amber-500/40' :
-                          isFailed ? 'bg-rose-500/20 text-rose-400 border border-rose-500/40' :
+                          isFailed ? 'bg-green-500/20 text-green-400 border border-green-500/40' :
                             isUpcoming ? 'bg-sky-500/20 text-sky-400 border border-sky-500/40' :
                               'bg-violet-500/20 text-violet-400 border border-violet-500/40'
                         }`}>
@@ -319,7 +319,7 @@ export function MergedTimeline({ runs, onEditRun, nextRun, onRefresh, typeTarget
 
                         {/* Variance indicator - Sky/Pink */}
                         {run.variance_applied !== undefined && run.variance_applied !== 0 && (
-                          <span className={`text-xs font-medium ${run.variance_applied > 0 ? 'text-sky-400' : 'text-pink-400'}`}>
+                          <span className={`text-xs font-medium ${run.variance_applied > 0 ? 'text-sky-400' : 'text-green-400'}`}>
                             ({run.variance_applied > 0 ? '+' : ''}{run.variance_applied})
                           </span>
                         )}
@@ -414,7 +414,7 @@ export function MergedTimeline({ runs, onEditRun, nextRun, onRefresh, typeTarget
                             : run.error_message?.includes('Auto-completed')
                               ? 'bg-teal-500/10 border border-teal-500/30 text-teal-400'
                               : isFailed
-                                ? 'bg-rose-500/10 border border-rose-500/30 text-rose-400'
+                                ? 'bg-green-500/10 border border-green-500/30 text-green-400'
                                 : 'bg-secondary/50 border border-border text-muted-foreground'
                         }`}>
                         <div className="flex items-center gap-2">
