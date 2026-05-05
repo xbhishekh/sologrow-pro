@@ -241,8 +241,8 @@ export default function EngagementOrder() {
         const keywords = typeKeywords[item.engagement_type] || [item.engagement_type];
         const platName = platform.toLowerCase();
 
-        // Find best matching service (cheapest non-zero price)
-        const match = allServices.find(s => {
+        // Find ALL matching services
+        const matches = allServices.filter(s => {
           const name = s.name?.toLowerCase() || '';
           const cat = s.category?.toLowerCase() || '';
           const matchesPlatform = name.includes(platName) || cat.includes(platName);
@@ -250,11 +250,15 @@ export default function EngagementOrder() {
           return matchesPlatform && matchesType && s.price > 0;
         });
 
-        if (match) {
+        if (matches.length > 0) {
+          // Cheapest service for pricing
+          const match = matches.reduce((a, b) => (a.price <= b.price ? a : b));
+          // Lowest min across all matching providers (router can rotate)
+          const lowestMin = Math.min(...matches.map(s => s.min_quantity ?? 0).filter(n => n > 0));
           prices[item.engagement_type] = {
             pricePerK: applyMarkup(match.price),
             serviceId: match.id,
-            minQuantity: match.min_quantity,
+            minQuantity: Number.isFinite(lowestMin) ? lowestMin : match.min_quantity,
           };
           return;
         }
@@ -262,10 +266,23 @@ export default function EngagementOrder() {
 
       // 3) Even if linked but price=0, still register the service for order routing
       if (item.service) {
+        // Also try to find a lower min from other matching services
+        const keywords = typeKeywords[item.engagement_type] || [item.engagement_type];
+        const platName = platform.toLowerCase();
+        const others = (allServices || []).filter(s => {
+          const name = s.name?.toLowerCase() || '';
+          const cat = s.category?.toLowerCase() || '';
+          const matchesPlatform = name.includes(platName) || cat.includes(platName);
+          const matchesType = keywords.some(kw => name.includes(kw));
+          return matchesPlatform && matchesType && (s.min_quantity ?? 0) > 0;
+        });
+        const lowestMin = others.length > 0
+          ? Math.min(...others.map(s => s.min_quantity), item.service.min_quantity ?? Infinity)
+          : item.service.min_quantity;
         prices[item.engagement_type] = {
           pricePerK: applyMarkup(item.service.price),
           serviceId: item.service.id,
-          minQuantity: item.service.min_quantity,
+          minQuantity: lowestMin,
         };
       }
     });
