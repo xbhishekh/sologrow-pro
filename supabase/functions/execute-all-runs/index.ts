@@ -986,7 +986,13 @@ async function processAllRuns(supabase: any, executionId: string, startTime: num
       let verifiedCharge: number | null = null
       let verifiedLastStatusCheck: string | null = null
       
-      for (const { account: selectedAccount, providerServiceId } of accountsToTry) {
+      for (const { account: selectedAccount, providerServiceId, minQuantity: accountMinQty } of accountsToTry) {
+        // Per-account quantity: boost up to this account's minimum if needed
+        let attemptQty = originalQty
+        if (accountMinQty && accountMinQty > attemptQty) {
+          attemptQty = accountMinQty
+        }
+        quantityToSend = attemptQty
         // PRE-CHECK: Cancel check
         {
           const { data: freshItem } = await supabase
