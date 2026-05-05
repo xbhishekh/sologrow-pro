@@ -925,14 +925,18 @@ async function processAllRuns(supabase: any, executionId: string, startTime: num
         }
       }
       
-      const accountsToTry: { account: ProviderAccount; providerServiceId: string }[] = [...availableAccounts]
+      const accountsToTry: { account: ProviderAccount; providerServiceId: string; minQuantity: number }[] = [...availableAccounts]
       accountsToTry.sort((a, b) => {
         const aRecent = recentCompletedAccountIds.has(a.account.id) ? 1 : 0
         const bRecent = recentCompletedAccountIds.has(b.account.id) ? 1 : 0
         return aRecent - bRecent
       })
       if (defaultProvider && !accountsToTry.some(a => a.account.id === defaultProvider!.id)) {
-        accountsToTry.push({ account: defaultProvider, providerServiceId: item.service.provider_service_id })
+        accountsToTry.push({
+          account: defaultProvider,
+          providerServiceId: item.service.provider_service_id,
+          minQuantity: Number(item.service.min_quantity || 0),
+        })
       }
       
       if (accountsToTry.length === 0) {
@@ -958,18 +962,15 @@ async function processAllRuns(supabase: any, executionId: string, startTime: num
         continue
       }
 
-      // Quantity handling — respect configured service minimum only
-      let quantityToSend = run.quantity_to_send
-      const serviceMinQty = Number(item.service.min_quantity || 0)
-      const effectiveMin = serviceMinQty > 0 ? serviceMinQty : quantityToSend
-      
-      if (quantityToSend < effectiveMin) {
-        console.log(`📏 Run #${run.run_number}: qty ${quantityToSend} below configured min ${effectiveMin}, boosting`)
-        quantityToSend = effectiveMin
-        await supabase.from('organic_run_schedule')
-          .update({ quantity_to_send: quantityToSend })
-          .eq('id', run.id)
-      }
+      // Quantity handling — pick the LOWEST-min provider first so small runs aren't rejected
+      const originalQty = run.quantity_to_send
+      accountsToTry.sort((a, b) => {
+        const aFits = (a.minQuantity || 0) <= originalQty ? 0 : 1
+        const bFits = (b.minQuantity || 0) <= originalQty ? 0 : 1
+        if (aFits !== bFits) return aFits - bFits
+        return (a.minQuantity || 0) - (b.minQuantity || 0)
+      })
+      let quantityToSend = originalQty
 
       console.log(`🔄 Run #${run.run_number}: ${quantityToSend} ${item.engagement_type}, trying ${accountsToTry.length} accounts`)
 
