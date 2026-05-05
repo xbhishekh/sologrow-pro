@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect, useCallback, memo } from "react";
 import { useNavigate } from "react-router-dom";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient, keepPreviousData } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useCurrency } from "@/hooks/useCurrency";
@@ -111,6 +111,8 @@ export default function EngagementOrder() {
       if (error) throw error;
       return data;
     },
+    staleTime: 5 * 60 * 1000,
+    placeholderData: keepPreviousData,
   });
 
   // Get unique platforms that have active bundles with engagement items
@@ -153,6 +155,10 @@ export default function EngagementOrder() {
       return data as (EngagementBundle & { items: (BundleItem & { service: any })[] })[];
     },
     enabled: !!platform && availablePlatforms.includes(platform),
+    staleTime: 5 * 60 * 1000,
+    placeholderData: keepPreviousData,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
   });
 
   // Get active engagement types from bundle
