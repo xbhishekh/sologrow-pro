@@ -12,6 +12,19 @@ const supabase = createClient(
 )
 
 const ALERT_COOLDOWN_HOURS = 6
+const INR_THRESHOLD = 50 // ₹50 — alert if balance falls below this (INR equivalent)
+
+async function getUsdToInrRate(): Promise<number> {
+  try {
+    const r = await fetch('https://api.exchangerate-api.com/v4/latest/USD')
+    const j = await r.json()
+    const rate = Number(j?.rates?.INR)
+    if (rate && rate > 0) return rate
+  } catch (e) {
+    console.error('FX fetch failed:', (e as Error).message)
+  }
+  return 84
+}
 
 async function sendTelegram(message: string) {
   try {
@@ -33,6 +46,9 @@ serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
 
   try {
+    const usdToInr = await getUsdToInrRate()
+    console.log(`USD->INR rate: ${usdToInr}`)
+
     const { data: accounts, error } = await supabase
       .from('provider_accounts')
       .select('*')
@@ -82,17 +98,23 @@ serve(async (req) => {
           last_balance_error: null,
         }).eq('id', acc.id)
 
-        const threshold = Number(acc.low_balance_threshold ?? 10)
+        // Convert to INR for unified threshold comparison
+        const isUSD = String(currency).toUpperCase() === 'USD'
+        const balanceInr = isUSD ? balance * usdToInr : balance
+
         const lastAlert = acc.last_low_balance_alert_at ? new Date(acc.last_low_balance_alert_at).getTime() : 0
         const cooldownMs = ALERT_COOLDOWN_HOURS * 60 * 60 * 1000
         const canAlert = Date.now() - lastAlert > cooldownMs
+        const isLow = balanceInr < INR_THRESHOLD
 
-        if (balance <= threshold && canAlert) {
+        if (isLow && canAlert) {
+          const nativeLine = isUSD
+            ? `Balance: <b>₹${balanceInr.toFixed(2)}</b> (${balance.toFixed(4)} USD)`
+            : `Balance: <b>₹${balanceInr.toFixed(2)}</b>`
           const msg = `⚠️ <b>LOW BALANCE ALERT</b>\n\n` +
             `Provider: <b>${acc.name}</b>\n` +
-            `Balance: <b>${balance.toFixed(2)} ${currency}</b>\n` +
-            `Threshold: ${threshold} ${currency}\n` +
-            `API: ${acc.api_url}\n\n` +
+            `${nativeLine}\n` +
+            `Threshold: <b>₹${INR_THRESHOLD}</b>\n\n` +
             `Please top-up soon to avoid order failures.`
           await sendTelegram(msg)
           await supabase.from('provider_accounts').update({
@@ -100,7 +122,7 @@ serve(async (req) => {
           }).eq('id', acc.id)
         }
 
-        results.push({ name: acc.name, balance, currency, alerted: balance <= threshold && canAlert })
+        results.push({ name: acc.name, balance, currency, balance_inr: balanceInr.toFixed(2), alerted: isLow && canAlert })
       } catch (e: any) {
         console.error(`Balance check failed for ${acc.name}:`, e.message)
         await supabase.from('provider_accounts').update({
