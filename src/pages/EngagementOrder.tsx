@@ -653,17 +653,17 @@ export default function EngagementOrder() {
     <DashboardLayout>
       <div className="max-w-5xl mx-auto px-3 sm:px-6 lg:px-8 space-y-4 sm:space-y-6 pb-8">
         {/* Header with gradient - Compact on mobile */}
-        <div className="relative overflow-hidden rounded-2xl p-4 sm:p-6 lg:p-8" style={{ background: 'linear-gradient(135deg, #831843, #166534, #16a34a)', boxShadow: '0 8px 32px rgba(190,24,93,.25)' }}>
+        <div className="relative overflow-hidden rounded-2xl p-3 sm:p-4 lg:p-5" style={{ background: 'linear-gradient(135deg, #831843, #166534, #16a34a)', boxShadow: '0 8px 32px rgba(190,24,93,.25)' }}>
           <div className="relative z-10 text-center">
-            <div className="inline-flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
-              <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl flex items-center justify-center" style={{ background: 'rgba(255,255,255,.2)', backdropFilter: 'blur(8px)' }}>
-                <Rocket className="h-6 w-6 sm:h-8 sm:w-8 text-white" />
+            <div className="inline-flex items-center gap-2 mb-2">
+              <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center" style={{ background: 'rgba(255,255,255,.2)', backdropFilter: 'blur(8px)' }}>
+                <Rocket className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
               </div>
             </div>
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-2 sm:mb-3 tracking-tight">
+            <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-white mb-1 tracking-tight">
               Organic Full Engagement
             </h1>
-            <p className="text-sm sm:text-base lg:text-lg max-w-lg mx-auto leading-relaxed" style={{ color: 'rgba(255,255,255,.7)' }}>
+            <p className="text-xs sm:text-sm max-w-lg mx-auto leading-snug" style={{ color: 'rgba(255,255,255,.7)' }}>
               One link → All engagement types with organic settings
             </p>
           </div>
@@ -677,40 +677,40 @@ export default function EngagementOrder() {
             "glass-card border-2 transition-all duration-300 relative overflow-hidden",
             isOrganicMode ? "border-success/40 bg-success/5 shadow-[0_0_30px_rgba(34,197,94,0.1)]" : "border-border"
           )}>
-            <CardContent className="p-4 sm:p-6 flex items-center justify-between gap-4">
-              <div className="flex items-center gap-4">
+            <CardContent className="p-3 sm:p-4 flex items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
                 <div className={cn(
-                  "w-12 h-12 rounded-2xl flex items-center justify-center transition-all shadow-inner",
+                  "w-9 h-9 rounded-xl flex items-center justify-center transition-all shadow-inner shrink-0",
                   isOrganicMode ? "bg-success text-white" : "bg-secondary text-muted-foreground"
                 )}>
-                  <Brain className="h-6 w-6" />
+                  <Brain className="h-4 w-4" />
                 </div>
                 <div>
                   <div className="flex items-center gap-2 mb-1">
-                    <h3 className="text-base sm:text-lg font-black text-foreground tracking-tight">AI Organic Algorithm</h3>
+                    <h3 className="text-sm font-black text-foreground tracking-tight">AI Organic Algorithm</h3>
                     <Badge variant="outline" className={cn(
-                      "text-[10px] font-black uppercase tracking-widest border-none px-2 py-0.5",
+                      "text-[9px] font-black uppercase tracking-widest border-none px-1.5 py-0",
                       isOrganicMode ? "bg-success text-white" : "bg-muted text-muted-foreground"
                     )}>
                       {isOrganicMode ? "ON" : "OFF"}
                     </Badge>
                   </div>
-                  <p className="text-xs text-muted-foreground font-medium mb-3">AI generates UNIQUE organic patterns for each order automatically</p>
-                  <div className="flex flex-wrap gap-2">
-                    <Badge variant="outline" className="bg-success/10 text-[10px] text-success border-success/20 font-bold py-0.5">✓ Unique S-curve per order</Badge>
-                    <Badge variant="outline" className="bg-success/10 text-[10px] text-success border-success/20 font-bold py-0.5">✓ Random variance</Badge>
-                    <Badge variant="outline" className="bg-success/10 text-[10px] text-success border-success/20 font-bold py-0.5">✓ Anti-bot detection</Badge>
+                  <p className="text-[11px] text-muted-foreground font-medium mb-2">AI generates UNIQUE organic patterns for each order automatically</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    <Badge variant="outline" className="bg-success/10 text-[9px] text-success border-success/20 font-bold py-0 px-1.5">✓ Unique S-curve per order</Badge>
+                    <Badge variant="outline" className="bg-success/10 text-[9px] text-success border-success/20 font-bold py-0 px-1.5">✓ Random variance</Badge>
+                    <Badge variant="outline" className="bg-success/10 text-[9px] text-success border-success/20 font-bold py-0 px-1.5">✓ Anti-bot detection</Badge>
                   </div>
                 </div>
               </div>
-              <div className="flex flex-col items-center gap-2">
+              <div className="flex flex-col items-center gap-2 shrink-0">
                 <Switch
                   checked={isOrganicMode}
                   onCheckedChange={(val) => {
                     setIsOrganicMode(val);
                     if (val) setIsAutoRatios(false); // turn off the other
                   }}
-                  className="data-[state=checked]:bg-success scale-125"
+                  className="data-[state=checked]:bg-success"
                 />
               </div>
             </CardContent>
@@ -720,42 +720,41 @@ export default function EngagementOrder() {
             "glass-card border-2 transition-all duration-300 relative overflow-hidden",
             isAutoRatios ? "border-primary/40 bg-primary/5 shadow-[0_0_30px_rgba(155,135,245,0.1)]" : "border-border"
           )}>
-            <CardContent className="p-4 sm:p-6 flex items-center justify-between gap-4">
-              <div className="flex items-center gap-4">
+            <CardContent className="p-3 sm:p-4 flex items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
                 <div className={cn(
-                  "w-12 h-12 rounded-2xl flex items-center justify-center transition-all shadow-inner",
+                  "w-9 h-9 rounded-xl flex items-center justify-center transition-all shadow-inner shrink-0",
                   isAutoRatios ? "bg-primary text-white" : "bg-secondary text-muted-foreground"
                 )}>
-                  <Percent className="h-6 w-6" />
+                  <Percent className="h-4 w-4" />
                 </div>
                 <div>
                   <div className="flex items-center gap-2 mb-1">
-                    <h3 className="text-base sm:text-lg font-black text-foreground tracking-tight">AI Smart Ratios</h3>
+                    <h3 className="text-sm font-black text-foreground tracking-tight">AI Smart Ratios</h3>
                     <Badge variant="outline" className={cn(
-                      "text-[10px] font-black uppercase tracking-widest border-none px-2 py-0.5",
+                      "text-[9px] font-black uppercase tracking-widest border-none px-1.5 py-0",
                       isAutoRatios ? "bg-primary text-white" : "bg-muted text-muted-foreground"
                     )}>
                       {isAutoRatios ? "AI AUTO-PILOT" : "MANUAL MODE"}
                     </Badge>
                   </div>
-                  <p className="text-xs text-muted-foreground font-medium mb-3">AI automatically calculates organic engagement ratios</p>
-                  <div className="flex flex-wrap gap-2">
+                  <p className="text-[11px] text-muted-foreground font-medium mb-2">AI automatically calculates organic engagement ratios</p>
+                  <div className="flex flex-wrap gap-1.5">
                     {isAutoRatios ? (
-                      <Badge variant="outline" className="bg-primary/10 text-[10px] text-primary border-primary/20 font-bold py-0.5 italic">Optimized for algorithms</Badge>
+                      <Badge variant="outline" className="bg-primary/10 text-[9px] text-primary border-primary/20 font-bold py-0 px-1.5 italic">Optimized for algorithms</Badge>
                     ) : (
-                      <Badge variant="outline" className="bg-amber-500/10 text-[10px] text-amber-500 border-amber-500/20 font-bold py-0.5">Customized by User</Badge>
+                      <Badge variant="outline" className="bg-amber-500/10 text-[9px] text-amber-500 border-amber-500/20 font-bold py-0 px-1.5">Customized by User</Badge>
                     )}
                   </div>
                 </div>
               </div>
-              <div className="flex flex-col items-center gap-2">
+              <div className="flex flex-col items-center gap-2 shrink-0">
                 <Switch
                   checked={isAutoRatios}
                   onCheckedChange={(val) => {
                     setIsAutoRatios(val);
                     if (val) setIsOrganicMode(false); // turn off the other
                   }}
-                  className="scale-125"
                 />
               </div>
             </CardContent>
