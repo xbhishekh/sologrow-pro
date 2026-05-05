@@ -323,6 +323,7 @@ export type Database = {
         Row: {
           base_quantity: number
           bundle_id: string | null
+          completed_at: string | null
           created_at: string | null
           error_message: string | null
           id: string
@@ -339,6 +340,7 @@ export type Database = {
         Insert: {
           base_quantity: number
           bundle_id?: string | null
+          completed_at?: string | null
           created_at?: string | null
           error_message?: string | null
           id?: string
@@ -355,6 +357,7 @@ export type Database = {
         Update: {
           base_quantity?: number
           bundle_id?: string | null
+          completed_at?: string | null
           created_at?: string | null
           error_message?: string | null
           id?: string
