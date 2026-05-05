@@ -894,6 +894,43 @@ async function processAllRuns(supabase: any, executionId: string, startTime: num
           }
         }
       } catch (_e) { /* non-fatal */ }
+
+      // ORDER-SCOPE FALLBACK: Exclude any provider that already failed/cancelled
+      // on ANY sibling item of the same engagement_order (same link).
+      // If a provider rejected/cancelled this link once, don't reuse it for other
+      // engagement types in the same order.
+      try {
+        const parentOrderId = item.engagement_order?.id || item.engagement_order_id
+        if (parentOrderId) {
+          const { data: siblingItems } = await supabase
+            .from('engagement_order_items')
+            .select('id')
+            .eq('engagement_order_id', parentOrderId)
+          const siblingIds = (siblingItems || []).map((s: any) => s.id).filter((id: string) => id && id !== item.id)
+          if (siblingIds.length > 0) {
+            const { data: priorFailedForOrder } = await supabase
+              .from('organic_run_schedule')
+              .select('provider_account_id, error_message, provider_status')
+              .in('engagement_order_item_id', siblingIds)
+              .in('status', ['failed', 'cancelled'])
+              .not('provider_account_id', 'is', null)
+              .limit(200)
+            if (priorFailedForOrder) {
+              for (const pr of priorFailedForOrder as any[]) {
+                const ps = (pr.provider_status || '').toLowerCase()
+                const em = (pr.error_message || '').toLowerCase()
+                const wasCancelled =
+                  ps.includes('cancel') || ps.includes('refund') ||
+                  em.includes('cancel') || em.includes('refund')
+                if (wasCancelled && pr.provider_account_id && !busyAccountIds.includes(pr.provider_account_id)) {
+                  busyAccountIds.push(pr.provider_account_id)
+                  console.log(`🚫 Order-scope exclude: provider ${pr.provider_account_id} previously cancelled link on sibling item`)
+                }
+              }
+            }
+          }
+        }
+      } catch (_e) { /* non-fatal */ }
       
       // From active (started) runs for same link+type
       const startedRunsForLink = (activeRuns || []).filter((r: any) => {
