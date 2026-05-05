@@ -226,29 +226,31 @@ export default function EngagementOrder() {
 
     const prices: Record<string, { pricePerK: number; serviceId: string | null; minQuantity: number }> = {};
     bundle.items.forEach(item => {
-      // 1) Try the linked service first
+      const keywords = typeKeywords[item.engagement_type] || [item.engagement_type];
+      const platName = platform.toLowerCase();
+      const matchingServices = (allServices || []).filter(s => {
+        const name = s.name?.toLowerCase() || '';
+        const cat = s.category?.toLowerCase() || '';
+        const matchesPlatform = name.includes(platName) || cat.includes(platName);
+        const matchesType = keywords.some(kw => name.includes(kw));
+        return matchesPlatform && matchesType;
+      });
+      const positiveMins = matchingServices.map(s => s.min_quantity ?? 0).filter(n => n > 0);
+      const lowestMatchedMin = positiveMins.length > 0 ? Math.min(...positiveMins) : undefined;
+
+      // 1) Try the linked service first, but show the lowest provider minimum across the rotation pool
       if (item.service && item.service.price > 0) {
         prices[item.engagement_type] = {
           pricePerK: applyMarkup(item.service.price),
           serviceId: item.service.id,
-          minQuantity: item.service.min_quantity,
+          minQuantity: lowestMatchedMin ?? item.service.min_quantity,
         };
         return;
       }
 
       // 2) Fallback: auto-match from all active services by platform + engagement type
       if (allServices && allServices.length > 0) {
-        const keywords = typeKeywords[item.engagement_type] || [item.engagement_type];
-        const platName = platform.toLowerCase();
-
-        // Find ALL matching services
-        const matches = allServices.filter(s => {
-          const name = s.name?.toLowerCase() || '';
-          const cat = s.category?.toLowerCase() || '';
-          const matchesPlatform = name.includes(platName) || cat.includes(platName);
-          const matchesType = keywords.some(kw => name.includes(kw));
-          return matchesPlatform && matchesType && s.price > 0;
-        });
+        const matches = matchingServices.filter(s => s.price > 0);
 
         if (matches.length > 0) {
           // Cheapest service for pricing
@@ -266,23 +268,10 @@ export default function EngagementOrder() {
 
       // 3) Even if linked but price=0, still register the service for order routing
       if (item.service) {
-        // Also try to find a lower min from other matching services
-        const keywords = typeKeywords[item.engagement_type] || [item.engagement_type];
-        const platName = platform.toLowerCase();
-        const others = (allServices || []).filter(s => {
-          const name = s.name?.toLowerCase() || '';
-          const cat = s.category?.toLowerCase() || '';
-          const matchesPlatform = name.includes(platName) || cat.includes(platName);
-          const matchesType = keywords.some(kw => name.includes(kw));
-          return matchesPlatform && matchesType && (s.min_quantity ?? 0) > 0;
-        });
-        const lowestMin = others.length > 0
-          ? Math.min(...others.map(s => s.min_quantity), item.service.min_quantity ?? Infinity)
-          : item.service.min_quantity;
         prices[item.engagement_type] = {
           pricePerK: applyMarkup(item.service.price),
           serviceId: item.service.id,
-          minQuantity: lowestMin,
+          minQuantity: lowestMatchedMin ?? item.service.min_quantity,
         };
       }
     });
