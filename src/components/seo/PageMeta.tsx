@@ -7,9 +7,9 @@ interface PageMetaProps {
   noIndex?: boolean;
 }
 
-const DEFAULT_DESCRIPTION = 'OrganicSMM — Premium organic social media growth platform. AI-powered delivery patterns, real engagement, 100% safe for your accounts.';
+const DEFAULT_DESCRIPTION = "OrganicSMM — World's first AI-organic SMM panel. Real Instagram, YouTube & TikTok engagement with natural delivery. 50,000+ orders, zero bans, 100% safe.";
 const SITE_NAME = 'OrganicSMM';
-const BASE_URL = 'https://sologrow-pro.lovable.app';
+const BASE_URL = 'https://organicsmm.online';
 
 export function PageMeta({
   title,
