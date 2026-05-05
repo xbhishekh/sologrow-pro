@@ -15,11 +15,24 @@ const Index = () => {
       {/* ═══ NAV ═══ */}
       <nav className="sticky top-0 z-50 w-full" style={{ background: 'rgba(255,255,255,.85)', backdropFilter: 'blur(16px)', borderBottom: '1px solid rgba(0,0,0,.06)' }}>
         <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
-          <Link to="/" className="flex items-center gap-2.5 flex-shrink-0">
-            <img src={logo} alt="OrganicSMM" className="w-9 h-9 rounded-xl object-cover" />
-            <div className="flex flex-col">
-              <span className="text-[15px] sm:text-[16px] font-bold tracking-tight leading-tight" style={{ color: '#1a1a2e' }}>OrganicSMM</span>
-              <span className="text-[8px] sm:text-[9px] font-semibold uppercase tracking-[0.15em] leading-tight" style={{ background: 'linear-gradient(90deg, #ec4899, #f97316)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>✦ Updated Version</span>
+          <Link to="/" className="flex items-center gap-2.5 sm:gap-3 flex-shrink-0 group">
+            {/* Logo with glowing gradient ring */}
+            <div className="relative">
+              <div className="absolute -inset-0.5 rounded-2xl opacity-70 group-hover:opacity-100 blur-sm transition-opacity" style={{ background: 'linear-gradient(135deg, #ec4899, #f97316, #ec4899)' }} />
+              <div className="relative p-[2px] rounded-2xl" style={{ background: 'linear-gradient(135deg, #ec4899, #f97316)' }}>
+                <img src={logo} alt="OrganicSMM" className="w-9 h-9 sm:w-10 sm:h-10 rounded-[14px] object-cover bg-white" />
+              </div>
+              {/* tiny v2 dot */}
+              <span className="absolute -top-1 -right-1 text-[7px] font-black text-white px-1.5 py-[1px] rounded-full leading-none flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #ec4899, #db2777)', boxShadow: '0 2px 6px rgba(236,72,153,.5)', border: '1.5px solid white' }}>
+                v2
+              </span>
+            </div>
+            <div className="flex flex-col leading-none gap-1">
+              <span className="text-[15px] sm:text-[17px] font-extrabold tracking-tight" style={{ color: '#1a1a2e' }}>OrganicSMM</span>
+              <span className="inline-flex items-center gap-1 text-[8px] sm:text-[9px] font-bold uppercase tracking-[0.14em] px-1.5 py-[2px] rounded-full self-start" style={{ background: 'linear-gradient(90deg, rgba(236,72,153,.12), rgba(249,115,22,.12))', border: '1px solid rgba(236,72,153,.25)' }}>
+                <span className="w-1 h-1 rounded-full animate-pulse" style={{ background: '#ec4899' }} />
+                <span style={{ background: 'linear-gradient(90deg, #ec4899, #f97316)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Updated · v2.0</span>
+              </span>
             </div>
           </Link>
           <div className="hidden md:flex items-center gap-6 lg:gap-8">
