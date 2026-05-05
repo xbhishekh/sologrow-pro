@@ -91,14 +91,35 @@ class MappingCache {
           return aTime - bTime
         })
         
+        // Fetch each provider-service min_quantity from services table (by provider_service_id + provider_id)
+        const providerServiceIds = sorted
+          .map((m: any) => m.provider_service_id)
+          .filter(Boolean)
+        const accountIds = sorted
+          .map((m: any) => m.provider_account?.id)
+          .filter(Boolean)
+        const minByKey = new Map<string, number>()
+        if (providerServiceIds.length > 0 && accountIds.length > 0) {
+          const { data: providerSvcRows } = await supabase
+            .from('services')
+            .select('provider_service_id, provider_id, min_quantity')
+            .in('provider_service_id', providerServiceIds)
+          if (providerSvcRows) {
+            for (const row of providerSvcRows as any[]) {
+              minByKey.set(`${row.provider_id}:${row.provider_service_id}`, Number(row.min_quantity || 0))
+            }
+          }
+        }
+
         const accounts: { account: ProviderAccount; providerServiceId: string; minQuantity: number }[] = []
         for (const mapping of sorted) {
           const account = mapping.provider_account as ProviderAccount
           if (account && account.is_active && isValidHttpUrl(account.api_url)) {
+            const key = `${account.provider_id}:${mapping.provider_service_id}`
             accounts.push({
               account,
               providerServiceId: mapping.provider_service_id,
-              minQuantity: Number((mapping as any).min_quantity || 0),
+              minQuantity: minByKey.get(key) || 0,
             })
           } else if (account && account.is_active && !isValidHttpUrl(account.api_url)) {
             console.log(`⚠️ Skipping provider ${account.name}: invalid api_url`)
