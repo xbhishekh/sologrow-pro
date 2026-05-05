@@ -6,7 +6,7 @@ import { PageMeta } from "@/components/seo/PageMeta";
 export default function CookiePolicy() {
   return (
     <>
-      <PageMeta title="Cookie Policy | OrganicSMM" description="Learn about how OrganicSMM uses cookies and similar technologies." canonicalPath="/cookies" />
+      <PageMeta title="Cookie Policy | OrganicSMM" description="Learn about how OrganicSMM uses cookies and similar technologies." canonicalPath="/cookies" breadcrumbs={[{ name: "Home", path: "/" }, { name: "Cookie Policy", path: "/cookies" }]} />
       <div className="min-h-screen bg-background text-foreground">
         <div className="max-w-4xl mx-auto px-4 py-12">
           <Link to="/">
