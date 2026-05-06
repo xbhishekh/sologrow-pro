@@ -878,13 +878,19 @@ async function processAllRuns(supabase: any, executionId: string, startTime: num
           .from('organic_run_schedule')
           .select('id, provider_account_id, error_message, provider_status, status')
           .eq('engagement_order_item_id', item.id)
+          .in('status', ['failed', 'cancelled'])
           .not('provider_account_id', 'is', null)
           .limit(200)
         if (priorFailedForItem) {
           for (const pr of priorFailedForItem as any[]) {
-            // STRICT NO-REPEAT: exclude ANY provider already touched on this item
-            // (regardless of outcome). Prevents repeats for the same service/item.
-            if (pr.id !== run.id && pr.provider_account_id && !busyAccountIds.includes(pr.provider_account_id)) {
+            // Exclude only providers that CANCELLED/REFUNDED previously on this item.
+            // Successful providers (priority #1) can keep handling future runs.
+            const ps = (pr.provider_status || '').toLowerCase()
+            const em = (pr.error_message || '').toLowerCase()
+            const wasCancelled =
+              ps.includes('cancel') || ps.includes('refund') ||
+              em.includes('cancel') || em.includes('refund')
+            if (wasCancelled && pr.id !== run.id && pr.provider_account_id && !busyAccountIds.includes(pr.provider_account_id)) {
               busyAccountIds.push(pr.provider_account_id)
             }
           }
