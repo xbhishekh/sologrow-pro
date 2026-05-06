@@ -1088,12 +1088,15 @@ async function processAllRuns(supabase: any, executionId: string, startTime: num
       let verifiedLastStatusCheck: string | null = null
       
       for (const { account: selectedAccount, providerServiceId, minQuantity: accountMinQty } of accountsToTry) {
-        // Per-account quantity: boost up to this account's minimum if needed
-        let attemptQty = originalQty
-        if (accountMinQty && accountMinQty > attemptQty) {
-          attemptQty = accountMinQty
+        // NEVER boost quantity above what was scheduled — that causes over-delivery
+        // (e.g. scheduled 112 views but provider min is 500 → user sees 500+ delivered).
+        // Instead, skip providers whose min exceeds the scheduled qty and try the next one.
+        if (accountMinQty && accountMinQty > originalQty) {
+          lastError = `Provider ${selectedAccount.name} min ${accountMinQty} > scheduled ${originalQty}, skipping to avoid over-delivery`
+          console.log(`⏭️ ${lastError}`)
+          continue
         }
-        quantityToSend = attemptQty
+        quantityToSend = originalQty
         // PRE-CHECK: Cancel check
         {
           const { data: freshItem } = await supabase
